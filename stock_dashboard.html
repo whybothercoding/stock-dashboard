@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IndieGoWeb Daily Stock Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Custom styles for sort indicators */
+        .sortable::after {
+            content: "↕";
+            position: absolute;
+            right: 10px;
+            opacity: 0.5;
+            font-size: 0.8em;
+        }
+
+        .sort-asc::after {
+            content: "↑";
+            opacity: 1;
+        }
+
+        .sort-desc::after {
+            content: "↓";
+            opacity: 1;
+        }
+
+        /* Tailwind UI inspired theme */
+        .theme-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .theme-surface {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        
+        .theme-text-primary {
+            color: #1f2937;
+        }
+        
+        .theme-text-secondary {
+            color: #6b7280;
+        }
+        
+        .theme-border {
+            border-color: #e5e7eb;
+        }
+        
+        .theme-shadow {
+            box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .theme-button-primary {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            transition: all 0.2s ease;
+        }
+        
+        .theme-button-primary:hover {
+            background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
+            transform: translateY(-1px);
+        }
+        
+        .theme-button-success {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        }
+        
+        .theme-button-success:hover {
+            background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+        }
+        
+        .theme-button-danger {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        }
+        
+        .theme-button-danger:hover {
+            background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+        }
+    </style>
+</head>
+<body class="theme-card min-h-screen p-5">
+    <div class="max-w-7xl mx-auto theme-surface rounded-2xl theme-shadow overflow-hidden">
+        <div class="bg-gradient-to-r from-slate-800 to-slate-700 text-white p-8 text-center">
+            <h1 class="text-4xl font-bold mb-3">IndieGoWeb Daily Stock Dashboard</h1>
+            <p class="text-gray-200 text-lg">Real-time stock monitoring and market sentiment analysis</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 p-8">
+            <div class="lg:col-span-2">
+                <h2 class="text-2xl font-bold theme-text-primary mb-6">Watchlist Overview</h2>
+                
+                <div id="loading" class="text-center py-10">
+                    <div class="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 mb-4"></div>
+                    <p class="text-gray-600">Fetching latest data...</p>
+                </div>
+
+                <div id="watchlist-content" class="hidden">
+                    <div class="bg-white rounded-lg theme-shadow overflow-hidden mb-6">
+                        <table class="min-w-full divide-y divide-gray-200" id="stock-table">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 sortable relative" data-column="ticker">Ticker</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 sortable relative" data-column="price">Price</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 sortable relative" data-column="change">Change %</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 sortable relative" data-column="volume">Volume</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 sortable relative" data-column="trend">Trend</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stock-tbody" class="bg-white divide-y divide-gray-200">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 p-6 rounded-xl border border-indigo-200 text-center">
+                            <h3 class="text-sm font-medium text-indigo-600 uppercase tracking-wide mb-2">Total Tickers</h3>
+                            <div class="text-3xl font-bold text-indigo-800" id="total-tickers">0</div>
+                        </div>
+                        <div class="bg-gradient-to-br from-emerald-50 to-emerald-100 p-6 rounded-xl border border-emerald-200 text-center">
+                            <h3 class="text-sm font-medium text-emerald-600 uppercase tracking-wide mb-2">Up Today</h3>
+                            <div class="text-3xl font-bold text-emerald-800" id="up-count">0</div>
+                        </div>
+                        <div class="bg-gradient-to-br from-rose-50 to-rose-100 p-6 rounded-xl border border-rose-200 text-center">
+                            <h3 class="text-sm font-medium text-rose-600 uppercase tracking-wide mb-2">Down Today</h3>
+                            <div class="text-3xl font-bold text-rose-800" id="down-count">0</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="space-y-6">
+                <div class="bg-white p-6 rounded-xl theme-shadow">
+                    <h3 class="text-xl font-bold theme-text-primary mb-6">Dashboard Controls</h3>
+                    
+                    <button class="w-full theme-button-primary text-white font-medium py-3 px-4 rounded-lg shadow-lg" onclick="refreshData()">
+                        Refresh Data
+                    </button>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl theme-shadow">
+                    <h4 class="text-lg font-semibold theme-text-primary mb-4">Manage Tickers</h4>
+                    <input type="text" id="new-ticker" placeholder="e.g., AAPL" maxlength="10" class="w-full px-4 py-3 theme-border border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent mb-3">
+                    <button onclick="addTicker()" class="w-full theme-button-success text-white font-medium py-3 px-4 rounded-lg">Add to Watchlist</button>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl theme-shadow">
+                    <h4 class="text-lg font-semibold theme-text-primary mb-4">Remove Ticker</h4>
+                    <select id="ticker-select" class="w-full px-4 py-3 theme-border border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent mb-3">
+                        <option value="">Select ticker to remove...</option>
+                    </select>
+                    <button onclick="removeTicker()" class="w-full theme-button-danger text-white font-medium py-3 px-4 rounded-lg">Remove from Watchlist</button>
+                </div>
+
+                <div class="bg-slate-50 p-6 rounded-xl theme-border border">
+                    <h4 class="text-lg font-semibold text-slate-800 mb-4">Market Context</h4>
+                    <ul class="space-y-2 text-sm text-slate-700">
+                        <li class="flex items-start">
+                            <span class="text-slate-500 mr-2">•</span>
+                            <span><strong>Rising ratio</strong> = Risk-on sentiment (good for small caps)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-slate-500 mr-2">•</span>
+                            <span><strong>Falling ratio</strong> = Risk-off sentiment (flight to quality)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-slate-500 mr-2">•</span>
+                            <span><strong>Current level</strong> shows relative strength</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Full-width IWM/QQQ Risk-On Ratio Section -->
+        <div class="px-8 pb-8">
+            <div class="bg-white rounded-xl theme-shadow overflow-hidden">
+                <div class="p-6 border-b theme-border">
+                    <h2 class="text-2xl font-bold theme-text-primary mb-2">IWM / QQQ Risk-On Ratio</h2>
+                    <p class="theme-text-secondary">Risk sentiment analysis across different timeframes</p>
+                </div>
+                
+                <!-- Tab Navigation -->
+                <div class="border-b theme-border">
+                    <nav class="flex space-x-8 px-6" aria-label="Tabs">
+                        <button class="tab-button active py-4 px-1 border-b-2 border-indigo-500 font-medium text-sm text-indigo-600" data-period="3mo">
+                            3-Month
+                        </button>
+                        <button class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" data-period="1mo">
+                            1-Month
+                        </button>
+                        <button class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" data-period="1wk">
+                            1-Week
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Tab Content -->
+                <div class="p-6">
+                    <div class="tab-content" id="tab-3mo">
+                        <div class="mb-6">
+                            <canvas id="ratioChart3mo" width="800" height="300"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content hidden" id="tab-1mo">
+                        <div class="mb-6">
+                            <canvas id="ratioChart1mo" width="800" height="300"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content hidden" id="tab-1wk">
+                        <div class="mb-6">
+                            <canvas id="ratioChart1wk" width="800" height="300"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Statistics Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-gray-50 p-4 rounded-lg theme-border border text-center">
+                            <h4 class="text-sm font-medium theme-text-secondary mb-2">Current Ratio</h4>
+                            <div class="text-xl font-bold theme-text-primary" id="current-ratio">-</div>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg theme-border border text-center">
+                            <h4 class="text-sm font-medium theme-text-secondary mb-2">Daily Change</h4>
+                            <div class="text-xl font-bold theme-text-primary" id="daily-change">-</div>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg theme-border border text-center">
+                            <h4 class="text-sm font-medium theme-text-secondary mb-2">Sentiment</h4>
+                            <div class="text-xl font-bold theme-text-primary" id="sentiment">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-slate-800 text-white p-6 text-center">
+            <p class="text-slate-200"><strong>Author:</strong> Unknown | <strong>Version:</strong> 1.0 MVP | <strong>License:</strong> MIT</p>
+            <p class="text-slate-300 text-sm mt-1">Built with HTML, Tailwind CSS, JavaScript and Yahoo Finance API</p>
+        </div>
+    </div>
+
+    <script>
+        // Default watchlist
+        let watchlist = ["AAPL", "NVDA", "TSLA", "META", "AMZN", "GOOG", "MSFT"];
+        let ratioCharts = {
+            '3mo': null,
+            '1mo': null,
+            '1wk': null
+        };
+        let currentStockData = [];
+        let currentSortColumn = null;
+        let currentSortDirection = 'asc';
+        let currentTab = '3mo';
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            loadWatchlistData();
+            loadAllRatioCharts();
+            
+            // Add click event listeners to table headers for sorting
+            document.querySelectorAll('th.sortable').forEach(th => {
+                th.addEventListener('click', handleColumnSort);
+            });
+            
+            // Add tab event listeners
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.addEventListener('click', handleTabClick);
+            });
+        });
+
+        // Load watchlist data
+        async function loadWatchlistData() {
+            const loading = document.getElementById('loading');
+            const content = document.getElementById('watchlist-content');
+            
+            loading.classList.remove('hidden');
+            loading.classList.add('block');
+            content.classList.add('hidden');
+            content.classList.remove('block');
+
+            try {
+                const stockData = [];
+                
+                for (const ticker of watchlist) {
+                    try {
+                        const data = await getStockSummary(ticker);
+                        if (data) {
+                            stockData.push(data);
+                        }
+                    } catch (error) {
+                        console.error(`Error fetching data for ${ticker}:`, error);
+                    }
+                }
+
+                displayStockData(stockData);
+                
+                loading.classList.add('hidden');
+                loading.classList.remove('block');
+                content.classList.remove('hidden');
+                content.classList.add('block');
+                
+            } catch (error) {
+                console.error('Error loading watchlist data:', error);
+                loading.innerHTML = '<div class="bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-lg">Failed to load stock data. Please check your internet connection and try again.</div>';
+            }
+        }
+
+        // Get stock summary data
+        async function getStockSummary(ticker) {
+            try {
+                // Using a CORS proxy to access Yahoo Finance
+                const proxyUrl = 'https://api.allorigins.win/raw?url=';
+                const yahooUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}`;
+                
+                const response = await fetch(proxyUrl + encodeURIComponent(yahooUrl));
+                const data = await response.json();
+                
+                if (!data.chart || !data.chart.result || data.chart.result.length === 0) {
+                    return null;
+                }
+
+                const result = data.chart.result[0];
+                const meta = result.meta;
+                const quotes = result.indicators.quote[0];
+                
+                const currentPrice = meta.regularMarketPrice;
+                const previousClose = meta.previousClose;
+                const change = ((currentPrice - previousClose) / previousClose) * 100;
+                const volume = meta.regularMarketVolume;
+                const trend = currentPrice > previousClose ? 'up' : 'down';
+
+                return {
+                    ticker: ticker,
+                    price: currentPrice.toFixed(2),
+                    change: change.toFixed(2),
+                    volume: volume.toLocaleString(),
+                    trend: trend
+                };
+                
+            } catch (error) {
+                console.error(`Error fetching data for ${ticker}:`, error);
+                return null;
+            }
+        }
+
+        // Display stock data in table
+        function displayStockData(data) {
+            // Store the data for sorting
+            currentStockData = data;
+            
+            const tbody = document.getElementById('stock-tbody');
+            tbody.innerHTML = '';
+
+            data.forEach(stock => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50 transition-colors duration-150';
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-bold text-gray-900">${stock.ticker}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">$${stock.price}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-bold ${parseFloat(stock.change) >= 0 ? 'text-emerald-600' : 'text-rose-600'}">
+                            ${parseFloat(stock.change) >= 0 ? '+' : ''}${stock.change}%
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">${stock.volume}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${stock.trend === 'up' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+                            ${stock.trend.toUpperCase()}
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Update statistics
+            const totalTickers = data.length;
+            const upCount = data.filter(stock => stock.trend === 'up').length;
+            const downCount = data.filter(stock => stock.trend === 'down').length;
+
+            document.getElementById('total-tickers').textContent = totalTickers;
+            document.getElementById('up-count').textContent = upCount;
+            document.getElementById('down-count').textContent = downCount;
+
+            // Update ticker select dropdown
+            updateTickerSelect();
+        }
+
+        // Sort stock data
+        function sortStockData(column, direction) {
+            if (!currentStockData || currentStockData.length === 0) return;
+
+            const sortedData = [...currentStockData].sort((a, b) => {
+                let aVal, bVal;
+
+                switch (column) {
+                    case 'ticker':
+                        aVal = a.ticker.toLowerCase();
+                        bVal = b.ticker.toLowerCase();
+                        break;
+                    case 'price':
+                        aVal = parseFloat(a.price);
+                        bVal = parseFloat(b.price);
+                        break;
+                    case 'change':
+                        aVal = parseFloat(a.change);
+                        bVal = parseFloat(b.change);
+                        break;
+                    case 'volume':
+                        // Remove commas and convert to number
+                        aVal = parseInt(a.volume.replace(/,/g, ''));
+                        bVal = parseInt(b.volume.replace(/,/g, ''));
+                        break;
+                    case 'trend':
+                        aVal = a.trend === 'up' ? 1 : 0;
+                        bVal = b.trend === 'up' ? 1 : 0;
+                        break;
+                    default:
+                        return 0;
+                }
+
+                if (direction === 'asc') {
+                    return aVal > bVal ? 1 : aVal < bVal ? -1 : 0;
+                } else {
+                    return aVal < bVal ? 1 : aVal > bVal ? -1 : 0;
+                }
+            });
+
+            displayStockData(sortedData);
+        }
+
+        // Handle column header click for sorting
+        function handleColumnSort(event) {
+            const column = event.target.getAttribute('data-column');
+            if (!column) return;
+
+            // Determine sort direction
+            let direction = 'asc';
+            if (currentSortColumn === column && currentSortDirection === 'asc') {
+                direction = 'desc';
+            }
+
+            // Update sort state
+            currentSortColumn = column;
+            currentSortDirection = direction;
+
+            // Update header classes
+            document.querySelectorAll('th.sortable').forEach(th => {
+                th.classList.remove('sort-asc', 'sort-desc');
+            });
+            event.target.classList.add(`sort-${direction}`);
+
+            // Sort the data
+            sortStockData(column, direction);
+        }
+
+        // Load all IWM/QQQ ratio charts
+        async function loadAllRatioCharts() {
+            const periods = ['3mo', '1mo', '1wk'];
+            
+            for (const period of periods) {
+                try {
+                    const [iwmData, qqqData] = await Promise.all([
+                        getHistoricalData('IWM', period),
+                        getHistoricalData('QQQ', period)
+                    ]);
+
+                    if (!iwmData || !qqqData) {
+                        throw new Error(`Failed to fetch historical data for ${period}`);
+                    }
+
+                    // Calculate ratio
+                    const ratio = calculateRatio(iwmData, qqqData);
+                    
+                    if (ratio.length === 0) {
+                        throw new Error(`Insufficient data for ratio calculation for ${period}`);
+                    }
+
+                    // Create chart
+                    createRatioChart(ratio, period);
+                    
+                    // Update ratio statistics for the current tab
+                    if (period === currentTab) {
+                        updateRatioStats(ratio);
+                    }
+                    
+                } catch (error) {
+                    console.error(`Error loading ratio chart for ${period}:`, error);
+                    const tabContent = document.getElementById(`tab-${period}`);
+                    if (tabContent) {
+                        tabContent.innerHTML = '<div class="bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-lg">Failed to load IWM/QQQ ratio data. Please try again later.</div>';
+                    }
+                }
+            }
+        }
+
+        // Handle tab clicks
+        function handleTabClick(event) {
+            const period = event.target.getAttribute('data-period');
+            if (!period) return;
+
+            // Update current tab
+            currentTab = period;
+
+            // Update tab button styles
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active', 'border-indigo-500', 'text-indigo-600');
+                button.classList.add('border-transparent', 'text-gray-500');
+            });
+
+            event.target.classList.add('active', 'border-indigo-500', 'text-indigo-600');
+            event.target.classList.remove('border-transparent', 'text-gray-500');
+
+            // Show/hide tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.getElementById(`tab-${period}`).classList.remove('hidden');
+
+            // Update statistics if chart exists
+            if (ratioCharts[period]) {
+                const chart = ratioCharts[period];
+                if (chart && chart.data && chart.data.datasets[0].data.length > 0) {
+                    const ratio = chart.data.datasets[0].data.map((value, index) => ({
+                        ratio: value,
+                        date: new Date(chart.data.labels[index])
+                    }));
+                    updateRatioStats(ratio);
+                }
+            }
+        }
+
+        // Get historical data
+        async function getHistoricalData(ticker, period) {
+            try {
+                const proxyUrl = 'https://api.allorigins.win/raw?url=';
+                const yahooUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?range=${period}&interval=1d`;
+                
+                const response = await fetch(proxyUrl + encodeURIComponent(yahooUrl));
+                const data = await response.json();
+                
+                if (!data.chart || !data.chart.result || data.chart.result.length === 0) {
+                    return null;
+                }
+
+                const result = data.chart.result[0];
+                const timestamps = result.timestamp;
+                const quotes = result.indicators.quote[0];
+                
+                return {
+                    timestamps: timestamps,
+                    closes: quotes.close
+                };
+                
+            } catch (error) {
+                console.error(`Error fetching historical data for ${ticker}:`, error);
+                return null;
+            }
+        }
+
+        // Calculate IWM/QQQ ratio
+        function calculateRatio(iwmData, qqqData) {
+            const ratio = [];
+            const iwmCloses = iwmData.closes;
+            const qqqCloses = qqqData.closes;
+            const timestamps = iwmData.timestamps;
+
+            for (let i = 0; i < Math.min(iwmCloses.length, qqqCloses.length); i++) {
+                if (iwmCloses[i] && qqqCloses[i]) {
+                    ratio.push({
+                        date: new Date(timestamps[i] * 1000),
+                        ratio: iwmCloses[i] / qqqCloses[i]
+                    });
+                }
+            }
+
+            return ratio;
+        }
+
+        // Create ratio chart
+        function createRatioChart(ratio, period) {
+            const canvasId = `ratioChart${period}`;
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            
+            if (ratioCharts[period]) {
+                ratioCharts[period].destroy();
+            }
+
+            const periodLabels = {
+                '3mo': '3-Month',
+                '1mo': '1-Month',
+                '1wk': '1-Week'
+            };
+
+            ratioCharts[period] = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ratio.map(r => r.date.toLocaleDateString()),
+                    datasets: [{
+                        label: 'IWM/QQQ Ratio',
+                        data: ratio.map(r => r.ratio),
+                        borderColor: 'orange',
+                        backgroundColor: 'rgba(255, 165, 0, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `${periodLabels[period]} IWM / QQQ Ratio (↑ = Risk-On, ↓ = Risk-Off)`,
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        },
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Ratio'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update ratio statistics
+        function updateRatioStats(ratio) {
+            if (ratio.length < 2) return;
+
+            const currentRatio = ratio[ratio.length - 1].ratio;
+            const previousRatio = ratio[ratio.length - 2].ratio;
+            const dailyChange = ((currentRatio - previousRatio) / previousRatio) * 100;
+            const sentiment = dailyChange > 0 ? 'Risk-On' : 'Risk-Off';
+
+            document.getElementById('current-ratio').textContent = currentRatio.toFixed(4);
+            document.getElementById('daily-change').textContent = `${dailyChange.toFixed(2)}%`;
+            document.getElementById('sentiment').textContent = sentiment;
+        }
+
+        // Add new ticker to watchlist
+        function addTicker() {
+            const input = document.getElementById('new-ticker');
+            const ticker = input.value.trim().toUpperCase();
+            
+            if (!ticker) {
+                showMessage('Please enter a ticker symbol', 'warning');
+                return;
+            }
+
+            if (watchlist.includes(ticker)) {
+                showMessage(`${ticker} is already in watchlist`, 'warning');
+                return;
+            }
+
+            watchlist.push(ticker);
+            input.value = '';
+            showMessage(`Added ${ticker} to watchlist`, 'success');
+            loadWatchlistData();
+        }
+
+        // Remove ticker from watchlist using dropdown
+        function removeTicker() {
+            const select = document.getElementById('ticker-select');
+            const ticker = select.value;
+            
+            if (!ticker) {
+                showMessage('Please select a ticker to remove', 'warning');
+                return;
+            }
+
+            if (confirm(`Are you sure you want to remove ${ticker} from your watchlist?`)) {
+                const index = watchlist.indexOf(ticker);
+                if (index > -1) {
+                    watchlist.splice(index, 1);
+                    showMessage(`Removed ${ticker} from watchlist`, 'success');
+                    loadWatchlistData();
+                }
+            }
+        }
+
+
+        // Update ticker select dropdown
+        function updateTickerSelect() {
+            const select = document.getElementById('ticker-select');
+            select.innerHTML = '<option value="">Select ticker to remove...</option>';
+            
+            // Sort tickers alphabetically
+            const sortedTickers = [...watchlist].sort((a, b) => a.localeCompare(b));
+            
+            sortedTickers.forEach(ticker => {
+                const option = document.createElement('option');
+                option.value = ticker;
+                option.textContent = ticker;
+                select.appendChild(option);
+            });
+        }
+
+        // Refresh all data
+        function refreshData() {
+            loadWatchlistData();
+            loadAllRatioCharts();
+            showMessage('Data refreshed successfully', 'success');
+        }
+
+        // Show message
+        function showMessage(message, type) {
+            const existingMessage = document.querySelector('.message');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+
+            const messageDiv = document.createElement('div');
+            let bgColor, textColor, borderColor;
+            
+            switch(type) {
+                case 'success':
+                    bgColor = 'bg-emerald-50';
+                    textColor = 'text-emerald-700';
+                    borderColor = 'border-emerald-200';
+                    break;
+                case 'warning':
+                    bgColor = 'bg-amber-50';
+                    textColor = 'text-amber-700';
+                    borderColor = 'border-amber-200';
+                    break;
+                case 'error':
+                    bgColor = 'bg-rose-50';
+                    textColor = 'text-rose-700';
+                    borderColor = 'border-rose-200';
+                    break;
+                default:
+                    bgColor = 'bg-indigo-50';
+                    textColor = 'text-indigo-700';
+                    borderColor = 'border-indigo-200';
+            }
+            
+            messageDiv.className = `message ${bgColor} ${textColor} ${borderColor} border px-4 py-3 rounded-lg mb-4`;
+            messageDiv.textContent = message;
+            
+            const sidebar = document.querySelector('.space-y-6');
+            sidebar.insertBefore(messageDiv, sidebar.firstChild);
+            
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 3000);
+        }
+
+        // Handle Enter key in ticker input
+        document.getElementById('new-ticker').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addTicker();
+            }
+        });
+    </script>
+</body>
+</html>
