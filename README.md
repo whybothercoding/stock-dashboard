@@ -332,8 +332,672 @@ ratioCharts[metricKey][period] = new Chart(ctx, {
 ```
 stock-dashboard/
 ├── stock_dashboard.html    # Main application file
+├── local.html             # Alternative version with empty watchlist
 ├── README.md              # Documentation
 └── .gitignore            # Git ignore rules (if needed)
+```
+
+## 📋 Detailed Implementation Steps
+
+### Phase 1: Project Setup and Architecture
+
+#### 1.1 Initial Project Setup
+```bash
+# Create project directory
+mkdir stock-dashboard
+cd stock-dashboard
+
+# Initialize git repository
+git init
+git remote add origin https://github.com/yourusername/stock-dashboard.git
+
+# Create basic file structure
+touch stock_dashboard.html README.md .gitignore
+```
+
+#### 1.2 HTML Structure Implementation
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IndieGoWeb Daily Stock Dashboard</title>
+    <!-- CDN Dependencies -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Dashboard Container -->
+    <div class="max-w-7xl mx-auto">
+        <!-- Header Section -->
+        <!-- Watchlist Section -->
+        <!-- Market Indicators Section -->
+        <!-- Footer Section -->
+    </div>
+</body>
+</html>
+```
+
+#### 1.3 CSS Theme Implementation
+```css
+<style>
+/* Custom gradient theme */
+.theme-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.theme-surface {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+}
+
+/* Button themes */
+.theme-button-primary {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+}
+
+/* Table styling */
+#stock-table {
+    min-width: 1400px;
+}
+</style>
+```
+
+### Phase 2: Core JavaScript Implementation
+
+#### 2.1 Global Variables and Configuration
+```javascript
+// Default watchlist
+let watchlist = ["AAPL", "NVDA", "TSLA", "META", "AMZN", "GOOG", "MSFT"];
+
+// Chart storage for 6 metrics with 2 periods each
+let ratioCharts = {
+    'iwm-qqq': { '1y': null, '3mo': null },
+    'rsp-spy': { '1y': null, '3mo': null },
+    'xli-xlu': { '1y': null, '3mo': null },
+    'xlf-xlk': { '1y': null, '3mo': null },
+    'hyg-ief': { '1y': null, '3mo': null },
+    'vix': { '1y': null, '3mo': null }
+};
+
+// Metric configurations
+const metrics = {
+    'iwm-qqq': { 
+        name: 'IWM / QQQ Risk Appetite', 
+        tickers: ['IWM', 'QQQ'], 
+        isRatio: true,
+        colors: { border: 'orange', background: 'rgba(255, 165, 0, 0.1)' }
+    },
+    // ... other metrics
+};
+```
+
+#### 2.2 API Integration Implementation
+```javascript
+// Generic retry function with exponential backoff
+async function fetchWithRetry(url, options = {}, maxRetries = 2, baseDelay = 2000) {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            const response = await fetch(url, {
+                ...options,
+                mode: 'cors',
+                credentials: 'omit',
+                timeout: 10000
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            
+            return await response.json();
+            
+        } catch (error) {
+            if (attempt === maxRetries) {
+                throw error;
+            }
+            
+            const delay = baseDelay * Math.pow(2, attempt - 1);
+            await new Promise(resolve => setTimeout(resolve, delay));
+        }
+    }
+}
+
+// Stock data fetching with multiple CORS proxies
+async function getStockSummary(ticker) {
+    const proxies = [
+        'https://cors-anywhere.herokuapp.com/',
+        'https://thingproxy.freeboard.io/fetch/',
+        'https://api.allorigins.win/raw?url=',
+        'https://corsproxy.io/?'
+    ];
+    
+    const yahooUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}`;
+    
+    for (const proxy of proxies) {
+        try {
+            const url = proxy === 'https://api.allorigins.win/raw?url=' 
+                ? proxy + encodeURIComponent(yahooUrl)
+                : proxy + yahooUrl;
+            
+            const data = await fetchWithRetry(url);
+            if (data && data.chart) {
+                return processStockData(data, ticker);
+            }
+        } catch (error) {
+            console.warn(`Proxy ${proxy} failed, trying next...`);
+            continue;
+        }
+    }
+    
+    throw new Error('All proxies failed');
+}
+```
+
+#### 2.3 Data Processing Implementation
+```javascript
+// Process stock data from Yahoo Finance API
+function processStockData(data, ticker) {
+    const result = data.chart.result[0];
+    const meta = result.meta;
+    const quotes = result.indicators.quote[0];
+    
+    const currentPrice = meta.regularMarketPrice;
+    const previousClose = meta.previousClose;
+    const change = ((currentPrice - previousClose) / previousClose) * 100;
+    const changeAmount = currentPrice - previousClose;
+    const volume = meta.regularMarketVolume;
+    const trend = currentPrice > previousClose ? 'up' : 'down';
+    
+    return {
+        ticker: ticker,
+        price: currentPrice ? currentPrice.toFixed(2) : 'N/A',
+        change: change ? change.toFixed(2) : 'N/A',
+        changeAmount: changeAmount ? changeAmount.toFixed(2) : 'N/A',
+        volume: volume ? volume.toLocaleString() : 'N/A',
+        trend: trend,
+        open: meta.regularMarketOpen ? meta.regularMarketOpen.toFixed(2) : 'N/A',
+        high: meta.regularMarketDayHigh ? meta.regularMarketDayHigh.toFixed(2) : 'N/A',
+        low: meta.regularMarketDayLow ? meta.regularMarketDayLow.toFixed(2) : 'N/A',
+        close: previousClose ? previousClose.toFixed(2) : 'N/A',
+        fiftyTwoWeekHigh: meta.fiftyTwoWeekHigh ? meta.fiftyTwoWeekHigh.toFixed(2) : 'N/A',
+        fiftyTwoWeekLow: meta.fiftyTwoWeekLow ? meta.fiftyTwoWeekLow.toFixed(2) : 'N/A'
+    };
+}
+```
+
+### Phase 3: Chart Implementation
+
+#### 3.1 Historical Data Fetching
+```javascript
+// Get historical data for charts
+async function getHistoricalData(ticker, period) {
+    const proxies = [
+        'https://cors-anywhere.herokuapp.com/',
+        'https://thingproxy.freeboard.io/fetch/',
+        'https://api.allorigins.win/raw?url=',
+        'https://corsproxy.io/?'
+    ];
+    
+    const yahooUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?range=${period}&interval=1d`;
+    
+    for (const proxy of proxies) {
+        try {
+            const url = proxy === 'https://api.allorigins.win/raw?url=' 
+                ? proxy + encodeURIComponent(yahooUrl)
+                : proxy + yahooUrl;
+            
+            const data = await fetchWithRetry(url);
+            if (data && data.chart) {
+                return processHistoricalData(data);
+            }
+        } catch (error) {
+            continue;
+        }
+    }
+    
+    return null;
+}
+
+function processHistoricalData(data) {
+    const result = data.chart.result[0];
+    const timestamps = result.timestamp;
+    const quotes = result.indicators.quote[0];
+    
+    return {
+        timestamps: timestamps,
+        closes: quotes.close
+    };
+}
+```
+
+#### 3.2 Ratio Calculation Implementation
+```javascript
+// Calculate ratio between two assets
+function calculateRatio(data1, data2) {
+    const ratio = [];
+    const closes1 = data1.closes;
+    const closes2 = data2.closes;
+    const timestamps = data1.timestamps;
+
+    for (let i = 0; i < Math.min(closes1.length, closes2.length); i++) {
+        if (closes1[i] && closes2[i]) {
+            ratio.push({
+                date: new Date(timestamps[i] * 1000),
+                ratio: closes1[i] / closes2[i]
+            });
+        }
+    }
+
+    return ratio;
+}
+```
+
+#### 3.3 Chart Creation Implementation
+```javascript
+// Create Chart.js chart
+function createRatioChart(data, metricKey, period, metric) {
+    const canvasId = `chart-${metricKey}-${period}`;
+    const ctx = document.getElementById(canvasId).getContext('2d');
+    
+    // Destroy existing chart if it exists
+    if (ratioCharts[metricKey] && ratioCharts[metricKey][period]) {
+        ratioCharts[metricKey][period].destroy();
+    }
+
+    const values = data.map(d => d.value || d.ratio);
+    const labels = data.map(d => d.date.toLocaleDateString());
+
+    ratioCharts[metricKey][period] = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: metric.name,
+                data: values,
+                borderColor: metric.colors.border,
+                backgroundColor: metric.colors.background,
+                borderWidth: 2,
+                fill: true,
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: `${periodLabels[period]} ${metric.name}`
+                },
+                legend: { display: false }
+            },
+            scales: {
+                x: { title: { display: true, text: 'Date' } },
+                y: { title: { display: true, text: metric.isRatio ? 'Ratio' : 'Value' } }
+            }
+        }
+    });
+
+    // Update statistics after chart creation
+    updateRatioStats(data, metricKey);
+}
+```
+
+### Phase 4: User Interface Implementation
+
+#### 4.1 Table Implementation
+```javascript
+// Display stock data in sortable table
+function displayStockData(data) {
+    currentStockData = data;
+    const tbody = document.getElementById('stock-tbody');
+    tbody.innerHTML = '';
+
+    data.forEach(stock => {
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-gray-50 transition-colors duration-150';
+        row.innerHTML = `
+            <td class="px-3 py-3 whitespace-nowrap">
+                <div class="text-sm font-bold text-gray-900">${stock.ticker}</div>
+            </td>
+            <td class="px-3 py-3 whitespace-nowrap">
+                <div class="text-sm text-gray-900">$${stock.price}</div>
+            </td>
+            <td class="px-3 py-3 whitespace-nowrap">
+                <div class="text-sm font-bold ${parseFloat(stock.change) >= 0 ? 'text-emerald-600' : 'text-rose-600'}">
+                    ${parseFloat(stock.change) >= 0 ? '+' : ''}${stock.change}%
+                </div>
+            </td>
+            <!-- Additional columns... -->
+        `;
+        tbody.appendChild(row);
+    });
+
+    // Update statistics
+    updateStatistics(data);
+}
+```
+
+#### 4.2 Sorting Implementation
+```javascript
+// Sort stock data by column
+function sortStockData(column, direction) {
+    if (!currentStockData || currentStockData.length === 0) return;
+
+    const sortedData = [...currentStockData].sort((a, b) => {
+        let aVal, bVal;
+
+        switch (column) {
+            case 'ticker':
+                aVal = a.ticker.toLowerCase();
+                bVal = b.ticker.toLowerCase();
+                break;
+            case 'price':
+                aVal = parseFloat(a.price) || 0;
+                bVal = parseFloat(b.price) || 0;
+                break;
+            // Additional cases...
+        }
+
+        if (direction === 'asc') {
+            return aVal > bVal ? 1 : aVal < bVal ? -1 : 0;
+        } else {
+            return aVal < bVal ? 1 : aVal > bVal ? -1 : 0;
+        }
+    });
+
+    displayStockData(sortedData);
+}
+```
+
+#### 4.3 Tab Navigation Implementation
+```javascript
+// Handle tab clicks for chart switching
+function handleTabClick(event) {
+    const metric = event.target.getAttribute('data-metric');
+    const period = event.target.getAttribute('data-period');
+    
+    // Update tab button styles
+    const metricButtons = document.querySelectorAll(`[data-metric="${metric}"]`);
+    metricButtons.forEach(button => {
+        button.classList.remove('active', 'border-indigo-500', 'text-indigo-600');
+        button.classList.add('border-transparent', 'text-gray-500');
+    });
+
+    event.target.classList.add('active', 'border-indigo-500', 'text-indigo-600');
+    event.target.classList.remove('border-transparent', 'text-gray-500');
+
+    // Show/hide tab content
+    const metricTabs = document.querySelectorAll(`[id^="tab-${metric}-"]`);
+    metricTabs.forEach(tab => tab.classList.add('hidden'));
+    document.getElementById(`tab-${metric}-${period}`).classList.remove('hidden');
+
+    // Update statistics if chart exists
+    if (ratioCharts[metric] && ratioCharts[metric][period]) {
+        updateRatioStatsFromChart(metric, period);
+    }
+}
+```
+
+### Phase 5: Error Handling and User Experience
+
+#### 5.1 Error Handling Implementation
+```javascript
+// Comprehensive error handling for API calls
+async function loadWatchlistData() {
+    const loading = document.getElementById('loading');
+    const content = document.getElementById('watchlist-content');
+    
+    try {
+        const stockData = [];
+        let loadedCount = 0;
+        let failedCount = 0;
+        
+        // Load stocks in parallel
+        const stockPromises = watchlist.map(async (ticker) => {
+            try {
+                const data = await getStockSummary(ticker);
+                if (data) {
+                    stockData.push(data);
+                    loadedCount++;
+                } else {
+                    failedCount++;
+                }
+            } catch (error) {
+                failedCount++;
+                console.error(`Error fetching data for ${ticker}:`, error);
+            }
+        });
+        
+        await Promise.allSettled(stockPromises);
+        
+        if (failedCount > 0) {
+            showMessage(`Loading complete: ${loadedCount} stocks loaded, ${failedCount} failed`, 'warning');
+        }
+        
+        displayStockData(stockData);
+        
+    } catch (error) {
+        console.error('Error loading watchlist data:', error);
+        showErrorMessage();
+    }
+}
+```
+
+#### 5.2 Toast Notification System
+```javascript
+// Centralized message system
+function showMessage(message, type) {
+    const existingMessage = document.querySelector('.message');
+    if (existingMessage) {
+        existingMessage.remove();
+    }
+
+    const messageDiv = document.createElement('div');
+    let bgColor, textColor, borderColor;
+    
+    switch(type) {
+        case 'success':
+            bgColor = 'bg-emerald-50';
+            textColor = 'text-emerald-700';
+            borderColor = 'border-emerald-200';
+            break;
+        case 'warning':
+            bgColor = 'bg-amber-50';
+            textColor = 'text-amber-700';
+            borderColor = 'border-amber-200';
+            break;
+        case 'error':
+            bgColor = 'bg-rose-50';
+            textColor = 'text-rose-700';
+            borderColor = 'border-rose-200';
+            break;
+    }
+    
+    messageDiv.className = `message ${bgColor} ${textColor} ${borderColor} border px-4 py-3 rounded-lg mb-4`;
+    messageDiv.textContent = message;
+    
+    const controlsSection = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-3');
+    if (controlsSection) {
+        controlsSection.insertBefore(messageDiv, controlsSection.firstChild);
+    }
+    
+    setTimeout(() => {
+        messageDiv.remove();
+    }, 3000);
+}
+```
+
+### Phase 6: Advanced Features Implementation
+
+#### 6.1 Dynamic Ticker Management
+```javascript
+// Add new ticker to watchlist
+function addTicker() {
+    const input = document.getElementById('new-ticker');
+    const ticker = input.value.trim().toUpperCase();
+    
+    if (!ticker) {
+        showMessage('Please enter a ticker symbol', 'warning');
+        return;
+    }
+
+    if (watchlist.includes(ticker)) {
+        showMessage(`${ticker} is already in watchlist`, 'warning');
+        return;
+    }
+
+    watchlist.push(ticker);
+    input.value = '';
+    showMessage(`Added ${ticker} to watchlist`, 'success');
+    loadWatchlistData();
+}
+
+// Remove ticker from watchlist
+function removeTicker() {
+    const select = document.getElementById('ticker-select');
+    const ticker = select.value;
+    
+    if (!ticker) {
+        showMessage('Please select a ticker to remove', 'warning');
+        return;
+    }
+
+    if (confirm(`Are you sure you want to remove ${ticker} from your watchlist?`)) {
+        const index = watchlist.indexOf(ticker);
+        if (index > -1) {
+            watchlist.splice(index, 1);
+            showMessage(`Removed ${ticker} from watchlist`, 'success');
+            loadWatchlistData();
+        }
+    }
+}
+```
+
+#### 6.2 Statistics Implementation
+```javascript
+// Update ratio statistics
+function updateRatioStats(data, metricKey) {
+    if (!data || data.length < 2) return;
+
+    const currentValue = data[data.length - 1].value || data[data.length - 1].ratio;
+    const previousValue = data[data.length - 2].value || data[data.length - 2].ratio;
+    
+    if (!currentValue || !previousValue || previousValue === 0) return;
+
+    const dailyChange = ((currentValue - previousValue) / previousValue) * 100;
+    
+    // Update DOM elements
+    const currentElement = document.getElementById(`stats-${metricKey}-current`);
+    const changeElement = document.getElementById(`stats-${metricKey}-change`);
+    const sentimentElement = document.getElementById(`stats-${metricKey}-sentiment`);
+    
+    if (currentElement) currentElement.textContent = currentValue.toFixed(4);
+    if (changeElement) changeElement.textContent = `${dailyChange.toFixed(2)}%`;
+    
+    // Set sentiment based on metric type
+    let sentiment = '';
+    if (metricKey === 'vix') {
+        sentiment = currentValue > 20 ? 'Fear' : 'Calm';
+    } else if (metricKey === 'iwm-qqq') {
+        sentiment = dailyChange > 0 ? 'Risk-On' : 'Risk-Off';
+    }
+    // Additional sentiment logic...
+    
+    if (sentimentElement) sentimentElement.textContent = sentiment;
+}
+```
+
+### Phase 7: Performance Optimization
+
+#### 7.1 Parallel Loading Implementation
+```javascript
+// Load all charts in parallel for better performance
+async function loadAllRatioCharts() {
+    const periods = ['1y', '3mo'];
+    const totalCharts = Object.keys(metrics).length * periods.length;
+    let loadedCharts = 0;
+    let failedCharts = 0;
+    
+    const chartPromises = [];
+    
+    for (const metricKey of Object.keys(metrics)) {
+        const metric = metrics[metricKey];
+        
+        for (const period of periods) {
+            const chartPromise = loadSingleChart(metricKey, metric, period)
+                .then(() => {
+                    loadedCharts++;
+                    console.log(`Chart loaded: ${metricKey} ${period} (${loadedCharts}/${totalCharts})`);
+                })
+                .catch((error) => {
+                    failedCharts++;
+                    console.error(`Chart failed: ${metricKey} ${period}`, error);
+                });
+            
+            chartPromises.push(chartPromise);
+        }
+    }
+    
+    await Promise.allSettled(chartPromises);
+    
+    // Update statistics after all charts are loaded
+    setTimeout(() => {
+        updateAllStatistics();
+    }, 1000);
+}
+```
+
+#### 7.2 Memory Management
+```javascript
+// Proper chart cleanup
+function createRatioChart(data, metricKey, period, metric) {
+    const canvasId = `chart-${metricKey}-${period}`;
+    const ctx = document.getElementById(canvasId).getContext('2d');
+    
+    // Destroy existing chart to prevent memory leaks
+    if (ratioCharts[metricKey] && ratioCharts[metricKey][period]) {
+        ratioCharts[metricKey][period].destroy();
+    }
+    
+    // Create new chart
+    ratioCharts[metricKey][period] = new Chart(ctx, {
+        // Chart configuration...
+    });
+}
+```
+
+### Phase 8: Testing and Deployment
+
+#### 8.1 Local Testing
+```bash
+# Test locally with Python server
+python -m http.server 8000
+
+# Test with Node.js serve
+npx serve .
+
+# Test with PHP server
+php -S localhost:8000
+```
+
+#### 8.2 Deployment Options
+```bash
+# GitHub Pages deployment
+git add .
+git commit -m "Initial commit"
+git push origin main
+
+# Netlify deployment (drag and drop)
+# Upload stock_dashboard.html to netlify.com
+
+# Vercel deployment
+npx vercel --prod
+
+# Docker deployment
+docker build -t stock-dashboard .
+docker run -p 80:80 stock-dashboard
 ```
 
 ### Key Development Areas
