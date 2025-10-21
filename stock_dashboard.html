@@ -152,16 +152,16 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                        <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 p-6 rounded-xl border border-indigo-200 text-center">
+                    <div class="grid grid-cols-3 gap-6 mb-8">
+                        <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 p-6 rounded-xl border border-indigo-200 text-center flex flex-col justify-end">
                             <h3 class="text-sm font-medium text-indigo-600 uppercase tracking-wide mb-2">Total Tickers</h3>
                             <div class="text-3xl font-bold text-indigo-800" id="total-tickers">0</div>
                         </div>
-                        <div class="bg-gradient-to-br from-emerald-50 to-emerald-100 p-6 rounded-xl border border-emerald-200 text-center">
+                        <div class="bg-gradient-to-br from-emerald-50 to-emerald-100 p-6 rounded-xl border border-emerald-200 text-center flex flex-col justify-end">
                             <h3 class="text-sm font-medium text-emerald-600 uppercase tracking-wide mb-2">Up Today</h3>
                             <div class="text-3xl font-bold text-emerald-800" id="up-count">0</div>
                         </div>
-                        <div class="bg-gradient-to-br from-rose-50 to-rose-100 p-6 rounded-xl border border-rose-200 text-center">
+                        <div class="bg-gradient-to-br from-rose-50 to-rose-100 p-6 rounded-xl border border-rose-200 text-center flex flex-col justify-end">
                             <h3 class="text-sm font-medium text-rose-600 uppercase tracking-wide mb-2">Down Today</h3>
                             <div class="text-3xl font-bold text-rose-800" id="down-count">0</div>
                         </div>
@@ -169,8 +169,8 @@
                 </div>
             </div>
 
-            <!-- Dashboard Controls Section - 2x2 Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Dashboard Controls Section - 3 Cards in One Row -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="bg-white p-6 rounded-xl theme-shadow flex flex-col">
                     <h3 class="text-xl font-bold theme-text-primary mb-6">Dashboard Controls</h3>
                     
@@ -200,67 +200,41 @@
                         <button onclick="removeTicker()" class="w-full theme-button-danger text-white font-medium py-3 px-4 rounded-lg">Remove from Watchlist</button>
                     </div>
                 </div>
-
-                <div class="bg-slate-50 p-6 rounded-xl theme-border border flex flex-col">
-                    <h4 class="text-lg font-semibold text-slate-800 mb-4">Market Context</h4>
-                    <ul class="space-y-2 text-sm text-slate-700">
-                        <li class="flex items-start">
-                            <span class="text-slate-500 mr-2">•</span>
-                            <span><strong>Rising ratio</strong> = Risk-on sentiment (good for small caps)</span>
-                        </li>
-                        <li class="flex items-start">
-                            <span class="text-slate-500 mr-2">•</span>
-                            <span><strong>Falling ratio</strong> = Risk-off sentiment (flight to quality)</span>
-                        </li>
-                        <li class="flex items-start">
-                            <span class="text-slate-500 mr-2">•</span>
-                            <span><strong>Current level</strong> shows relative strength</span>
-                        </li>
-                    </ul>
-                </div>
             </div>
         </div>
 
-        <!-- Full-width IWM/QQQ Risk-On Ratio Section -->
-        <div class="px-8 pb-8">
+        <!-- Market Ratios and Index Charts Section -->
+        <div class="px-8 pb-8 space-y-8">
+            <!-- IWM / QQQ Risk Appetite Chart -->
             <div class="bg-white rounded-xl theme-shadow overflow-hidden">
                 <div class="p-6 border-b theme-border">
-                    <h2 class="text-2xl font-bold theme-text-primary mb-2">IWM / QQQ Risk-On Ratio</h2>
-                    <p class="theme-text-secondary">Risk sentiment analysis across different timeframes</p>
+                    <h2 class="text-2xl font-bold theme-text-primary mb-2">IWM / QQQ Risk Appetite</h2>
+                    <p class="theme-text-secondary">Small caps ÷ Big tech - Risk appetite (speculative mood)</p>
                 </div>
                 
                 <!-- Tab Navigation -->
                 <div class="border-b theme-border">
                     <nav class="flex space-x-8 px-6" aria-label="Tabs">
-                        <button class="tab-button active py-4 px-1 border-b-2 border-indigo-500 font-medium text-sm text-indigo-600" data-period="3mo">
+                        <button class="tab-button active py-4 px-1 border-b-2 border-indigo-500 font-medium text-sm text-indigo-600" data-metric="iwm-qqq" data-period="1y">
+                            1-Year
+                        </button>
+                        <button class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" data-metric="iwm-qqq" data-period="3mo">
                             3-Month
-                        </button>
-                        <button class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" data-period="1mo">
-                            1-Month
-                        </button>
-                        <button class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" data-period="1wk">
-                            1-Week
                         </button>
                     </nav>
                 </div>
 
                 <!-- Tab Content -->
                 <div class="p-6">
-                    <div class="tab-content" id="tab-3mo">
+                    <div class="tab-content" id="tab-iwm-qqq-1y">
                         <div class="mb-6">
-                            <canvas id="ratioChart3mo" width="800" height="300"></canvas>
+                            <canvas id="chart-iwm-qqq-1y" width="800" height="300"></canvas>
                         </div>
                     </div>
                     
-                    <div class="tab-content hidden" id="tab-1mo">
+                    <div class="tab-content hidden" id="tab-iwm-qqq-3mo">
                         <div class="mb-6">
-                            <canvas id="ratioChart1mo" width="800" height="300"></canvas>
-                        </div>
-                    </div>
-                    
-                    <div class="tab-content hidden" id="tab-1wk">
-                        <div class="mb-6">
-                            <canvas id="ratioChart1wk" width="800" height="300"></canvas>
+                            <canvas id="chart-iwm-qqq-3mo" width="800" height="300"></canvas>
                         </div>
                     </div>
 
@@ -268,15 +242,270 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="bg-gray-50 p-4 rounded-lg theme-border border text-center">
                             <h4 class="text-sm font-medium theme-text-secondary mb-2">Current Ratio</h4>
-                            <div class="text-xl font-bold theme-text-primary" id="current-ratio">-</div>
+                            <div class="text-xl font-bold theme-text-primary" id="stats-iwm-qqq-current">-</div>
                         </div>
                         <div class="bg-gray-50 p-4 rounded-lg theme-border border text-center">
                             <h4 class="text-sm font-medium theme-text-secondary mb-2">Daily Change</h4>
-                            <div class="text-xl font-bold theme-text-primary" id="daily-change">-</div>
+                            <div class="text-xl font-bold theme-text-primary" id="stats-iwm-qqq-change">-</div>
                         </div>
                         <div class="bg-gray-50 p-4 rounded-lg theme-border border text-center">
                             <h4 class="text-sm font-medium theme-text-secondary mb-2">Sentiment</h4>
-                            <div class="text-xl font-bold theme-text-primary" id="sentiment">-</div>
+                            <div class="text-xl font-bold theme-text-primary" id="stats-iwm-qqq-sentiment">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RSP / SPY Market Breadth Chart -->
+            <div class="bg-white rounded-xl theme-shadow overflow-hidden">
+                <div class="p-6 border-b theme-border">
+                    <h2 class="text-2xl font-bold theme-text-primary mb-2">RSP / SPY Market Breadth</h2>
+                    <p class="theme-text-secondary">Equal-weight S&P ÷ Cap-weighted S&P - Market breadth (how broad the rally is)</p>
+                </div>
+                
+                <!-- Tab Navigation -->
+                <div class="border-b theme-border">
+                    <nav class="flex space-x-8 px-6" aria-label="Tabs">
+                        <button class="tab-button active py-4 px-1 border-b-2 border-indigo-500 font-medium text-sm text-indigo-600" data-metric="rsp-spy" data-period="1y">
+                            1-Year
+                        </button>
+                        <button class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" data-metric="rsp-spy" data-period="3mo">
+                            3-Month
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Tab Content -->
+                <div class="p-6">
+                    <div class="tab-content" id="tab-rsp-spy-1y">
+                        <div class="mb-6">
+                            <canvas id="chart-rsp-spy-1y" width="800" height="300"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content hidden" id="tab-rsp-spy-3mo">
+                        <div class="mb-6">
+                            <canvas id="chart-rsp-spy-3mo" width="800" height="300"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Statistics Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-gray-50 p-4 rounded-lg theme-border border text-center">
+                            <h4 class="text-sm font-medium theme-text-secondary mb-2">Current Ratio</h4>
+                            <div class="text-xl font-bold theme-text-primary" id="stats-rsp-spy-current">-</div>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg theme-border border text-center">
+                            <h4 class="text-sm font-medium theme-text-secondary mb-2">Daily Change</h4>
+                            <div class="text-xl font-bold theme-text-primary" id="stats-rsp-spy-change">-</div>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg theme-border border text-center">
+                            <h4 class="text-sm font-medium theme-text-secondary mb-2">Breadth</h4>
+                            <div class="text-xl font-bold theme-text-primary" id="stats-rsp-spy-sentiment">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- XLI / XLU Economic Confidence Chart -->
+            <div class="bg-white rounded-xl theme-shadow overflow-hidden">
+                <div class="p-6 border-b theme-border">
+                    <h2 class="text-2xl font-bold theme-text-primary mb-2">XLI / XLU Economic Confidence</h2>
+                    <p class="theme-text-secondary">Industrials ÷ Utilities - Economic confidence (growth vs defense)</p>
+                </div>
+                
+                <!-- Tab Navigation -->
+                <div class="border-b theme-border">
+                    <nav class="flex space-x-8 px-6" aria-label="Tabs">
+                        <button class="tab-button active py-4 px-1 border-b-2 border-indigo-500 font-medium text-sm text-indigo-600" data-metric="xli-xlu" data-period="1y">
+                            1-Year
+                        </button>
+                        <button class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" data-metric="xli-xlu" data-period="3mo">
+                            3-Month
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Tab Content -->
+                <div class="p-6">
+                    <div class="tab-content" id="tab-xli-xlu-1y">
+                        <div class="mb-6">
+                            <canvas id="chart-xli-xlu-1y" width="800" height="300"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content hidden" id="tab-xli-xlu-3mo">
+                        <div class="mb-6">
+                            <canvas id="chart-xli-xlu-3mo" width="800" height="300"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Statistics Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-gray-50 p-4 rounded-lg theme-border border text-center">
+                            <h4 class="text-sm font-medium theme-text-secondary mb-2">Current Ratio</h4>
+                            <div class="text-xl font-bold theme-text-primary" id="stats-xli-xlu-current">-</div>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg theme-border border text-center">
+                            <h4 class="text-sm font-medium theme-text-secondary mb-2">Daily Change</h4>
+                            <div class="text-xl font-bold theme-text-primary" id="stats-xli-xlu-change">-</div>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg theme-border border text-center">
+                            <h4 class="text-sm font-medium theme-text-secondary mb-2">Confidence</h4>
+                            <div class="text-xl font-bold theme-text-primary" id="stats-xli-xlu-sentiment">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- XLF / XLK Value vs Growth Chart -->
+            <div class="bg-white rounded-xl theme-shadow overflow-hidden">
+                <div class="p-6 border-b theme-border">
+                    <h2 class="text-2xl font-bold theme-text-primary mb-2">XLF / XLK Value vs Growth</h2>
+                    <p class="theme-text-secondary">Financials ÷ Technology - Value vs growth rotation</p>
+                </div>
+                
+                <!-- Tab Navigation -->
+                <div class="border-b theme-border">
+                    <nav class="flex space-x-8 px-6" aria-label="Tabs">
+                        <button class="tab-button active py-4 px-1 border-b-2 border-indigo-500 font-medium text-sm text-indigo-600" data-metric="xlf-xlk" data-period="1y">
+                            1-Year
+                        </button>
+                        <button class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" data-metric="xlf-xlk" data-period="3mo">
+                            3-Month
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Tab Content -->
+                <div class="p-6">
+                    <div class="tab-content" id="tab-xlf-xlk-1y">
+                        <div class="mb-6">
+                            <canvas id="chart-xlf-xlk-1y" width="800" height="300"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content hidden" id="tab-xlf-xlk-3mo">
+                        <div class="mb-6">
+                            <canvas id="chart-xlf-xlk-3mo" width="800" height="300"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Statistics Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-gray-50 p-4 rounded-lg theme-border border text-center">
+                            <h4 class="text-sm font-medium theme-text-secondary mb-2">Current Ratio</h4>
+                            <div class="text-xl font-bold theme-text-primary" id="stats-xlf-xlk-current">-</div>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg theme-border border text-center">
+                            <h4 class="text-sm font-medium theme-text-secondary mb-2">Daily Change</h4>
+                            <div class="text-xl font-bold theme-text-primary" id="stats-xlf-xlk-change">-</div>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg theme-border border text-center">
+                            <h4 class="text-sm font-medium theme-text-secondary mb-2">Rotation</h4>
+                            <div class="text-xl font-bold theme-text-primary" id="stats-xlf-xlk-sentiment">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HYG / IEF Credit Risk Chart -->
+            <div class="bg-white rounded-xl theme-shadow overflow-hidden">
+                <div class="p-6 border-b theme-border">
+                    <h2 class="text-2xl font-bold theme-text-primary mb-2">HYG / IEF Credit Risk</h2>
+                    <p class="theme-text-secondary">High-yield bonds ÷ Treasuries - Credit risk appetite (risk tolerance in bond market)</p>
+                </div>
+                
+                <!-- Tab Navigation -->
+                <div class="border-b theme-border">
+                    <nav class="flex space-x-8 px-6" aria-label="Tabs">
+                        <button class="tab-button active py-4 px-1 border-b-2 border-indigo-500 font-medium text-sm text-indigo-600" data-metric="hyg-ief" data-period="1y">
+                            1-Year
+                        </button>
+                        <button class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" data-metric="hyg-ief" data-period="3mo">
+                            3-Month
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Tab Content -->
+                <div class="p-6">
+                    <div class="tab-content" id="tab-hyg-ief-1y">
+                        <div class="mb-6">
+                            <canvas id="chart-hyg-ief-1y" width="800" height="300"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content hidden" id="tab-hyg-ief-3mo">
+                        <div class="mb-6">
+                            <canvas id="chart-hyg-ief-3mo" width="800" height="300"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Statistics Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-gray-50 p-4 rounded-lg theme-border border text-center">
+                            <h4 class="text-sm font-medium theme-text-secondary mb-2">Current Ratio</h4>
+                            <div class="text-xl font-bold theme-text-primary" id="stats-hyg-ief-current">-</div>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg theme-border border text-center">
+                            <h4 class="text-sm font-medium theme-text-secondary mb-2">Daily Change</h4>
+                            <div class="text-xl font-bold theme-text-primary" id="stats-hyg-ief-change">-</div>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg theme-border border text-center">
+                            <h4 class="text-sm font-medium theme-text-secondary mb-2">Risk Appetite</h4>
+                            <div class="text-xl font-bold theme-text-primary" id="stats-hyg-ief-sentiment">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIX Volatility Index Chart -->
+            <div class="bg-white rounded-xl theme-shadow overflow-hidden">
+                <div class="p-6 border-b theme-border">
+                    <h2 class="text-2xl font-bold theme-text-primary mb-2">VIX Volatility Index</h2>
+                    <p class="theme-text-secondary">Volatility index (CBOE) - Fear or calm level in the market</p>
+                </div>
+                
+                <!-- Tab Navigation -->
+                <div class="border-b theme-border">
+                    <nav class="flex space-x-8 px-6" aria-label="Tabs">
+                        <button class="tab-button active py-4 px-1 border-b-2 border-indigo-500 font-medium text-sm text-indigo-600" data-metric="vix" data-period="1y">
+                            1-Year
+                        </button>
+                        <button class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" data-metric="vix" data-period="3mo">
+                            3-Month
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Tab Content -->
+                <div class="p-6">
+                    <div class="tab-content" id="tab-vix-1y">
+                        <div class="mb-6">
+                            <canvas id="chart-vix-1y" width="800" height="300"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content hidden" id="tab-vix-3mo">
+                        <div class="mb-6">
+                            <canvas id="chart-vix-3mo" width="800" height="300"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Statistics Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-gray-50 p-4 rounded-lg theme-border border text-center">
+                            <h4 class="text-sm font-medium theme-text-secondary mb-2">Current VIX</h4>
+                            <div class="text-xl font-bold theme-text-primary" id="stats-vix-current">-</div>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg theme-border border text-center">
+                            <h4 class="text-sm font-medium theme-text-secondary mb-2">Daily Change</h4>
+                            <div class="text-xl font-bold theme-text-primary" id="stats-vix-change">-</div>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg theme-border border text-center">
+                            <h4 class="text-sm font-medium theme-text-secondary mb-2">Market Mood</h4>
+                            <div class="text-xl font-bold theme-text-primary" id="stats-vix-sentiment">-</div>
                         </div>
                     </div>
                 </div>
@@ -292,15 +521,60 @@
     <script>
         // Default watchlist
         let watchlist = ["AAPL", "NVDA", "TSLA", "META", "AMZN", "GOOG", "MSFT"];
+        
+        // Chart storage for 6 metrics with 2 periods each
         let ratioCharts = {
-            '3mo': null,
-            '1mo': null,
-            '1wk': null
+            'iwm-qqq': { '1y': null, '3mo': null },
+            'rsp-spy': { '1y': null, '3mo': null },
+            'xli-xlu': { '1y': null, '3mo': null },
+            'xlf-xlk': { '1y': null, '3mo': null },
+            'hyg-ief': { '1y': null, '3mo': null },
+            'vix': { '1y': null, '3mo': null }
         };
+        
+        // Metric configurations
+        const metrics = {
+            'iwm-qqq': { 
+                name: 'IWM / QQQ Risk Appetite', 
+                tickers: ['IWM', 'QQQ'], 
+                isRatio: true,
+                colors: { border: 'orange', background: 'rgba(255, 165, 0, 0.1)' }
+            },
+            'rsp-spy': { 
+                name: 'RSP / SPY Market Breadth', 
+                tickers: ['RSP', 'SPY'], 
+                isRatio: true,
+                colors: { border: 'blue', background: 'rgba(0, 123, 255, 0.1)' }
+            },
+            'xli-xlu': { 
+                name: 'XLI / XLU Economic Confidence', 
+                tickers: ['XLI', 'XLU'], 
+                isRatio: true,
+                colors: { border: 'green', background: 'rgba(0, 200, 83, 0.1)' }
+            },
+            'xlf-xlk': { 
+                name: 'XLF / XLK Value vs Growth', 
+                tickers: ['XLF', 'XLK'], 
+                isRatio: true,
+                colors: { border: 'purple', background: 'rgba(156, 39, 176, 0.1)' }
+            },
+            'hyg-ief': { 
+                name: 'HYG / IEF Credit Risk', 
+                tickers: ['HYG', 'IEF'], 
+                isRatio: true,
+                colors: { border: 'red', background: 'rgba(244, 67, 54, 0.1)' }
+            },
+            'vix': { 
+                name: 'VIX Volatility Index', 
+                tickers: ['^VIX'], 
+                isRatio: false,
+                colors: { border: 'darkred', background: 'rgba(139, 0, 0, 0.1)' }
+            }
+        };
+        
         let currentStockData = [];
         let currentSortColumn = null;
         let currentSortDirection = 'asc';
-        let currentTab = '3mo';
 
         // Initialize the app
         document.addEventListener('DOMContentLoaded', function() {
@@ -318,7 +592,7 @@
             });
         });
 
-        // Load watchlist data
+        // Load watchlist data with improved error handling
         async function loadWatchlistData() {
             const loading = document.getElementById('loading');
             const content = document.getElementById('watchlist-content');
@@ -329,43 +603,121 @@
             content.classList.remove('block');
 
             try {
+                console.log(`Loading watchlist data for ${watchlist.length} tickers...`);
                 const stockData = [];
+                let loadedCount = 0;
+                let failedCount = 0;
                 
-                for (const ticker of watchlist) {
+                // Load stocks in parallel for better performance
+                const stockPromises = watchlist.map(async (ticker) => {
                     try {
                         const data = await getStockSummary(ticker);
                         if (data) {
                             stockData.push(data);
+                            loadedCount++;
+                            console.log(`Loaded ${ticker} (${loadedCount}/${watchlist.length})`);
+                        } else {
+                            failedCount++;
+                            console.warn(`Failed to load ${ticker} (${failedCount} failures)`);
                         }
                     } catch (error) {
+                        failedCount++;
                         console.error(`Error fetching data for ${ticker}:`, error);
                     }
-                }
-
-                displayStockData(stockData);
+                });
                 
-                loading.classList.add('hidden');
-                loading.classList.remove('block');
-                content.classList.remove('hidden');
-                content.classList.add('block');
+                // Wait for all stock data to load
+                await Promise.allSettled(stockPromises);
+                
+                console.log(`Watchlist loading complete: ${loadedCount} loaded, ${failedCount} failed`);
+                
+                // Update loading message if there were failures
+                if (failedCount > 0) {
+                    const loadingElement = document.getElementById('loading');
+                    loadingElement.innerHTML = `
+                        <div class="text-center py-10">
+                            <div class="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 mb-4"></div>
+                            <p class="text-gray-600">Loading complete: ${loadedCount} stocks loaded, ${failedCount} failed</p>
+                        </div>
+                    `;
+                    
+                    // Show the content after a brief delay
+                    setTimeout(() => {
+                        displayStockData(stockData);
+                        loading.classList.add('hidden');
+                        loading.classList.remove('block');
+                        content.classList.remove('hidden');
+                        content.classList.add('block');
+                    }, 1000);
+                } else {
+                    displayStockData(stockData);
+                    loading.classList.add('hidden');
+                    loading.classList.remove('block');
+                    content.classList.remove('hidden');
+                    content.classList.add('block');
+                }
                 
             } catch (error) {
                 console.error('Error loading watchlist data:', error);
-                loading.innerHTML = '<div class="bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-lg">Failed to load stock data. Please check your internet connection and try again.</div>';
+                loading.innerHTML = `
+                    <div class="bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-lg">
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                            </svg>
+                            <div>
+                                <strong>Failed to load stock data</strong><br>
+                                Please check your internet connection and try refreshing the page.
+                            </div>
+                        </div>
+                    </div>
+                `;
             }
         }
 
-        // Get stock summary data
+        // Generic retry function with exponential backoff
+        async function fetchWithRetry(url, options = {}, maxRetries = 3, baseDelay = 1000) {
+            for (let attempt = 1; attempt <= maxRetries; attempt++) {
+                try {
+                    const response = await fetch(url, {
+                        ...options,
+                        timeout: 10000 // 10 second timeout
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    const data = await response.json();
+                    return data;
+                    
+                } catch (error) {
+                    console.warn(`Attempt ${attempt}/${maxRetries} failed for ${url}:`, error.message);
+                    
+                    if (attempt === maxRetries) {
+                        console.error(`All ${maxRetries} attempts failed for ${url}`);
+                        throw error;
+                    }
+                    
+                    // Exponential backoff: 1s, 2s, 4s
+                    const delay = baseDelay * Math.pow(2, attempt - 1);
+                    console.log(`Retrying in ${delay}ms...`);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+        }
+
+        // Get stock summary data with retry mechanism
         async function getStockSummary(ticker) {
             try {
                 // Using a CORS proxy to access Yahoo Finance
                 const proxyUrl = 'https://api.allorigins.win/raw?url=';
                 const yahooUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}`;
                 
-                const response = await fetch(proxyUrl + encodeURIComponent(yahooUrl));
-                const data = await response.json();
+                const data = await fetchWithRetry(proxyUrl + encodeURIComponent(yahooUrl));
                 
                 if (!data.chart || !data.chart.result || data.chart.result.length === 0) {
+                    console.warn(`No chart data available for ${ticker}`);
                     return null;
                 }
 
@@ -393,12 +745,7 @@
                 const timezone = meta.exchangeTimezoneName;
                 const lastUpdate = new Date(meta.regularMarketTime * 1000);
                 
-                // Debug logging to see what's available
-                console.log(`Debug for ${ticker}:`, {
-                    open: open,
-                    metaKeys: Object.keys(meta),
-                    quotesKeys: quotes ? Object.keys(quotes) : 'No quotes'
-                });
+                console.log(`Successfully fetched data for ${ticker}`);
 
                 return {
                     ticker: ticker,
@@ -420,7 +767,7 @@
                 };
                 
             } catch (error) {
-                console.error(`Error fetching data for ${ticker}:`, error);
+                console.error(`Failed to fetch data for ${ticker} after all retries:`, error);
                 return null;
             }
         }
@@ -593,56 +940,134 @@
             sortStockData(column, direction);
         }
 
-        // Load all IWM/QQQ ratio charts
+        // Load all ratio/index charts with improved error handling
         async function loadAllRatioCharts() {
-            const periods = ['3mo', '1mo', '1wk'];
+            const periods = ['1y', '3mo'];
+            const totalCharts = Object.keys(metrics).length * periods.length;
+            let loadedCharts = 0;
+            let failedCharts = 0;
             
-            for (const period of periods) {
+            console.log(`Starting to load ${totalCharts} charts...`);
+            
+            // Load charts in parallel for better performance
+            const chartPromises = [];
+            
+            for (const metricKey of Object.keys(metrics)) {
+                const metric = metrics[metricKey];
+                
+                for (const period of periods) {
+                    const chartPromise = loadSingleChart(metricKey, metric, period)
+                        .then(() => {
+                            loadedCharts++;
+                            console.log(`Chart loaded: ${metricKey} ${period} (${loadedCharts}/${totalCharts})`);
+                        })
+                        .catch((error) => {
+                            failedCharts++;
+                            console.error(`Chart failed: ${metricKey} ${period} (${failedCharts} failures)`, error);
+                        });
+                    
+                    chartPromises.push(chartPromise);
+                }
+            }
+            
+            // Wait for all charts to complete (success or failure)
+            await Promise.allSettled(chartPromises);
+            
+            console.log(`Chart loading complete: ${loadedCharts} loaded, ${failedCharts} failed`);
+            
+            // Update statistics for all metrics after all charts are loaded
+            setTimeout(() => {
+                updateAllStatistics();
+            }, 1000);
+        }
+
+        // Load a single chart with retry logic
+        async function loadSingleChart(metricKey, metric, period) {
+            const maxRetries = 2; // Additional retries for chart loading
+            
+            for (let attempt = 1; attempt <= maxRetries; attempt++) {
                 try {
-                    const [iwmData, qqqData] = await Promise.all([
-                        getHistoricalData('IWM', period),
-                        getHistoricalData('QQQ', period)
-                    ]);
+                    if (metric.isRatio) {
+                        // Handle ratio calculations
+                        const [data1, data2] = await Promise.all([
+                            getHistoricalData(metric.tickers[0], period),
+                            getHistoricalData(metric.tickers[1], period)
+                        ]);
 
-                    if (!iwmData || !qqqData) {
-                        throw new Error(`Failed to fetch historical data for ${period}`);
+                        if (!data1 || !data2) {
+                            throw new Error(`Failed to fetch historical data for ${metricKey} ${period}`);
+                        }
+
+                        // Calculate ratio
+                        const ratio = calculateRatio(data1, data2);
+                        
+                        if (ratio.length === 0) {
+                            throw new Error(`Insufficient data for ratio calculation for ${metricKey} ${period}`);
+                        }
+
+                        // Create chart
+                        createRatioChart(ratio, metricKey, period, metric);
+                        
+                    } else {
+                        // Handle direct values (like VIX)
+                        const data = await getHistoricalData(metric.tickers[0], period);
+                        
+                        if (!data) {
+                            throw new Error(`Failed to fetch historical data for ${metricKey} ${period}`);
+                        }
+
+                        // Convert to chart format
+                        const chartData = data.closes.map((value, index) => ({
+                            date: new Date(data.timestamps[index] * 1000),
+                            value: value
+                        }));
+
+                        // Create chart
+                        createRatioChart(chartData, metricKey, period, metric);
                     }
-
-                    // Calculate ratio
-                    const ratio = calculateRatio(iwmData, qqqData);
                     
-                    if (ratio.length === 0) {
-                        throw new Error(`Insufficient data for ratio calculation for ${period}`);
-                    }
-
-                    // Create chart
-                    createRatioChart(ratio, period);
-                    
-                    // Update ratio statistics for the current tab
-                    if (period === currentTab) {
-                        updateRatioStats(ratio);
-                    }
+                    return; // Success, exit retry loop
                     
                 } catch (error) {
-                    console.error(`Error loading ratio chart for ${period}:`, error);
-                    const tabContent = document.getElementById(`tab-${period}`);
-                    if (tabContent) {
-                        tabContent.innerHTML = '<div class="bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-lg">Failed to load IWM/QQQ ratio data. Please try again later.</div>';
+                    console.warn(`Attempt ${attempt}/${maxRetries} failed for ${metricKey} ${period}:`, error.message);
+                    
+                    if (attempt === maxRetries) {
+                        // Show error message in the chart area
+                        const tabContent = document.getElementById(`tab-${metricKey}-${period}`);
+                        if (tabContent) {
+                            tabContent.innerHTML = `
+                                <div class="bg-amber-50 border border-amber-200 text-amber-700 px-4 py-3 rounded-lg">
+                                    <div class="flex items-center">
+                                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        <div>
+                                            <strong>Chart Loading Failed</strong><br>
+                                            ${metric.name} (${period})<br>
+                                            <small>Please try refreshing the page</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        throw error;
                     }
+                    
+                    // Wait before retry
+                    await new Promise(resolve => setTimeout(resolve, 2000 * attempt));
                 }
             }
         }
 
         // Handle tab clicks
         function handleTabClick(event) {
+            const metric = event.target.getAttribute('data-metric');
             const period = event.target.getAttribute('data-period');
-            if (!period) return;
+            if (!metric || !period) return;
 
-            // Update current tab
-            currentTab = period;
-
-            // Update tab button styles
-            document.querySelectorAll('.tab-button').forEach(button => {
+            // Update tab button styles for this metric
+            const metricButtons = document.querySelectorAll(`[data-metric="${metric}"]`);
+            metricButtons.forEach(button => {
                 button.classList.remove('active', 'border-indigo-500', 'text-indigo-600');
                 button.classList.add('border-transparent', 'text-gray-500');
             });
@@ -650,35 +1075,36 @@
             event.target.classList.add('active', 'border-indigo-500', 'text-indigo-600');
             event.target.classList.remove('border-transparent', 'text-gray-500');
 
-            // Show/hide tab content
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.add('hidden');
+            // Show/hide tab content for this metric
+            const metricTabs = document.querySelectorAll(`[id^="tab-${metric}-"]`);
+            metricTabs.forEach(tab => {
+                tab.classList.add('hidden');
             });
-            document.getElementById(`tab-${period}`).classList.remove('hidden');
+            document.getElementById(`tab-${metric}-${period}`).classList.remove('hidden');
 
             // Update statistics if chart exists
-            if (ratioCharts[period]) {
-                const chart = ratioCharts[period];
+            if (ratioCharts[metric] && ratioCharts[metric][period]) {
+                const chart = ratioCharts[metric][period];
                 if (chart && chart.data && chart.data.datasets[0].data.length > 0) {
-                    const ratio = chart.data.datasets[0].data.map((value, index) => ({
-                        ratio: value,
+                    const data = chart.data.datasets[0].data.map((value, index) => ({
+                        value: value,
                         date: new Date(chart.data.labels[index])
                     }));
-                    updateRatioStats(ratio);
+                    updateRatioStats(data, metric);
                 }
             }
         }
 
-        // Get historical data
+        // Get historical data with retry mechanism
         async function getHistoricalData(ticker, period) {
             try {
                 const proxyUrl = 'https://api.allorigins.win/raw?url=';
                 const yahooUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?range=${period}&interval=1d`;
                 
-                const response = await fetch(proxyUrl + encodeURIComponent(yahooUrl));
-                const data = await response.json();
+                const data = await fetchWithRetry(proxyUrl + encodeURIComponent(yahooUrl));
                 
                 if (!data.chart || !data.chart.result || data.chart.result.length === 0) {
+                    console.warn(`No historical data available for ${ticker} (${period})`);
                     return null;
                 }
 
@@ -686,13 +1112,20 @@
                 const timestamps = result.timestamp;
                 const quotes = result.indicators.quote[0];
                 
+                if (!timestamps || !quotes || !quotes.close) {
+                    console.warn(`Incomplete historical data for ${ticker} (${period})`);
+                    return null;
+                }
+                
+                console.log(`Successfully fetched historical data for ${ticker} (${period}): ${timestamps.length} data points`);
+                
                 return {
                     timestamps: timestamps,
                     closes: quotes.close
                 };
                 
             } catch (error) {
-                console.error(`Error fetching historical data for ${ticker}:`, error);
+                console.error(`Failed to fetch historical data for ${ticker} (${period}) after all retries:`, error);
                 return null;
             }
         }
@@ -717,29 +1150,32 @@
         }
 
         // Create ratio chart
-        function createRatioChart(ratio, period) {
-            const canvasId = `ratioChart${period}`;
+        function createRatioChart(data, metricKey, period, metric) {
+            const canvasId = `chart-${metricKey}-${period}`;
             const ctx = document.getElementById(canvasId).getContext('2d');
             
-            if (ratioCharts[period]) {
-                ratioCharts[period].destroy();
+            if (ratioCharts[metricKey] && ratioCharts[metricKey][period]) {
+                ratioCharts[metricKey][period].destroy();
             }
 
             const periodLabels = {
-                '3mo': '3-Month',
-                '1mo': '1-Month',
-                '1wk': '1-Week'
+                '1y': '1-Year',
+                '3mo': '3-Month'
             };
 
-            ratioCharts[period] = new Chart(ctx, {
+            // Determine data values and labels
+            const values = data.map(d => d.value || d.ratio);
+            const labels = data.map(d => d.date.toLocaleDateString());
+
+            ratioCharts[metricKey][period] = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: ratio.map(r => r.date.toLocaleDateString()),
+                    labels: labels,
                     datasets: [{
-                        label: 'IWM/QQQ Ratio',
-                        data: ratio.map(r => r.ratio),
-                        borderColor: 'orange',
-                        backgroundColor: 'rgba(255, 165, 0, 0.1)',
+                        label: metric.name,
+                        data: values,
+                        borderColor: metric.colors.border,
+                        backgroundColor: metric.colors.background,
                         borderWidth: 2,
                         fill: true,
                         tension: 0.1
@@ -751,7 +1187,7 @@
                     plugins: {
                         title: {
                             display: true,
-                            text: `${periodLabels[period]} IWM / QQQ Ratio (↑ = Risk-On, ↓ = Risk-Off)`,
+                            text: `${periodLabels[period]} ${metric.name}`,
                             font: {
                                 size: 14,
                                 weight: 'bold'
@@ -771,26 +1207,110 @@
                         y: {
                             title: {
                                 display: true,
-                                text: 'Ratio'
+                                text: metric.isRatio ? 'Ratio' : 'Value'
                             }
                         }
                     }
                 }
             });
+
+            // Update statistics after chart creation
+            updateRatioStats(data, metricKey);
         }
 
         // Update ratio statistics
-        function updateRatioStats(ratio) {
-            if (ratio.length < 2) return;
+        function updateRatioStats(data, metricKey) {
+            if (!data || data.length < 2) {
+                console.warn(`Insufficient data for ${metricKey} statistics`);
+                return;
+            }
 
-            const currentRatio = ratio[ratio.length - 1].ratio;
-            const previousRatio = ratio[ratio.length - 2].ratio;
-            const dailyChange = ((currentRatio - previousRatio) / previousRatio) * 100;
-            const sentiment = dailyChange > 0 ? 'Risk-On' : 'Risk-Off';
+            try {
+                const currentValue = data[data.length - 1].value || data[data.length - 1].ratio;
+                const previousValue = data[data.length - 2].value || data[data.length - 2].ratio;
+                
+                if (!currentValue || !previousValue || previousValue === 0) {
+                    console.warn(`Invalid data values for ${metricKey}: current=${currentValue}, previous=${previousValue}`);
+                    return;
+                }
 
-            document.getElementById('current-ratio').textContent = currentRatio.toFixed(4);
-            document.getElementById('daily-change').textContent = `${dailyChange.toFixed(2)}%`;
-            document.getElementById('sentiment').textContent = sentiment;
+                const dailyChange = ((currentValue - previousValue) / previousValue) * 100;
+                
+                // Update the specific metric's statistics
+                const currentElement = document.getElementById(`stats-${metricKey}-current`);
+                const changeElement = document.getElementById(`stats-${metricKey}-change`);
+                const sentimentElement = document.getElementById(`stats-${metricKey}-sentiment`);
+                
+                if (currentElement) {
+                    currentElement.textContent = currentValue.toFixed(4);
+                }
+                
+                if (changeElement) {
+                    changeElement.textContent = `${dailyChange.toFixed(2)}%`;
+                }
+                
+                // Set sentiment based on metric type
+                let sentiment = '';
+                if (metricKey === 'vix') {
+                    sentiment = currentValue > 20 ? 'Fear' : 'Calm';
+                } else if (metricKey === 'iwm-qqq') {
+                    sentiment = dailyChange > 0 ? 'Risk-On' : 'Risk-Off';
+                } else if (metricKey === 'rsp-spy') {
+                    sentiment = dailyChange > 0 ? 'Broad Rally' : 'Narrow Rally';
+                } else if (metricKey === 'xli-xlu') {
+                    sentiment = dailyChange > 0 ? 'Growth' : 'Defense';
+                } else if (metricKey === 'xlf-xlk') {
+                    sentiment = dailyChange > 0 ? 'Value' : 'Growth';
+                } else if (metricKey === 'hyg-ief') {
+                    sentiment = dailyChange > 0 ? 'Risk-On' : 'Risk-Off';
+                }
+                
+                if (sentimentElement) {
+                    sentimentElement.textContent = sentiment;
+                }
+                
+                console.log(`Updated statistics for ${metricKey}:`, {
+                    current: currentValue.toFixed(4),
+                    change: `${dailyChange.toFixed(2)}%`,
+                    sentiment: sentiment
+                });
+                
+            } catch (error) {
+                console.error(`Error updating statistics for ${metricKey}:`, error);
+            }
+        }
+
+        // Update all statistics for all metrics
+        function updateAllStatistics() {
+            console.log('Updating all statistics...');
+            
+            for (const metricKey of Object.keys(metrics)) {
+                // Try to get data from the 1-year chart first, then 3-month
+                let chartData = null;
+                let period = '1y';
+                
+                if (ratioCharts[metricKey] && ratioCharts[metricKey]['1y'] && ratioCharts[metricKey]['1y'].data) {
+                    const chart = ratioCharts[metricKey]['1y'];
+                    chartData = chart.data.datasets[0].data.map((value, index) => ({
+                        value: value,
+                        date: new Date(chart.data.labels[index])
+                    }));
+                } else if (ratioCharts[metricKey] && ratioCharts[metricKey]['3mo'] && ratioCharts[metricKey]['3mo'].data) {
+                    const chart = ratioCharts[metricKey]['3mo'];
+                    chartData = chart.data.datasets[0].data.map((value, index) => ({
+                        value: value,
+                        date: new Date(chart.data.labels[index])
+                    }));
+                    period = '3mo';
+                }
+                
+                if (chartData && chartData.length > 0) {
+                    console.log(`Updating statistics for ${metricKey} using ${period} data`);
+                    updateRatioStats(chartData, metricKey);
+                } else {
+                    console.warn(`No chart data available for ${metricKey}`);
+                }
+            }
         }
 
         // Add new ticker to watchlist
@@ -851,11 +1371,46 @@
             });
         }
 
-        // Refresh all data
-        function refreshData() {
-            loadWatchlistData();
-            loadAllRatioCharts();
-            showMessage('Data refreshed successfully', 'success');
+        // Refresh all data with improved feedback
+        async function refreshData() {
+            const refreshButton = document.querySelector('button[onclick="refreshData()"]');
+            const originalText = refreshButton.textContent;
+            
+            // Update button to show loading state
+            refreshButton.disabled = true;
+            refreshButton.textContent = 'Refreshing...';
+            refreshButton.classList.add('opacity-50', 'cursor-not-allowed');
+            
+            try {
+                console.log('Starting data refresh...');
+                
+                // Load data in parallel
+                const [watchlistResult, chartsResult] = await Promise.allSettled([
+                    loadWatchlistData(),
+                    loadAllRatioCharts()
+                ]);
+                
+                // Check results
+                const watchlistSuccess = watchlistResult.status === 'fulfilled';
+                const chartsSuccess = chartsResult.status === 'fulfilled';
+                
+                if (watchlistSuccess && chartsSuccess) {
+                    showMessage('Data refreshed successfully', 'success');
+                } else if (watchlistSuccess || chartsSuccess) {
+                    showMessage('Data partially refreshed - some charts may have failed to load', 'warning');
+                } else {
+                    showMessage('Failed to refresh data - please try again', 'error');
+                }
+                
+            } catch (error) {
+                console.error('Error during refresh:', error);
+                showMessage('Failed to refresh data - please try again', 'error');
+            } finally {
+                // Restore button state
+                refreshButton.disabled = false;
+                refreshButton.textContent = originalText;
+                refreshButton.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
         }
 
         // Show message

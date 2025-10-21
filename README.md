@@ -6,7 +6,7 @@
 [![HTML5](https://img.shields.io/badge/HTML5-5-orange.svg)](https://developer.mozilla.org/en-US/docs/Web/HTML)
 [![CSS3](https://img.shields.io/badge/CSS3-3-blue.svg)](https://developer.mozilla.org/en-US/docs/Web/CSS)
 
-A lightweight, **client-side HTML dashboard** for monitoring your daily **watchlist** (ONDS, RGTI, APLD, etc.) and analyzing **IWM / QQQ** risk sentiment across multiple timeframes — built with **vanilla HTML, CSS, and JavaScript** using **free APIs**.
+A comprehensive **client-side HTML dashboard** for monitoring your **stock watchlist** and analyzing **market sentiment** through multiple financial ratios and indicators — built with **vanilla HTML, CSS, and JavaScript** using **free APIs**.
 
 > **🚀 Zero Dependencies • No Build Process • No API Keys Required**
 
@@ -35,10 +35,17 @@ A lightweight, **client-side HTML dashboard** for monitoring your daily **watchl
 ## 🧭 Overview
 
 This dashboard helps you:
-- See **latest price, % change, volume, and trend** for your stocks
-- Visualize **IWM vs QQQ ratio** across multiple timeframes (3-month, 1-month, 1-week)
-- Analyze **risk-on / risk-off market sentiment** with tabbed chart interface
-- Quickly check your **daily momentum** and **macro context** before trading
+- Monitor your **stock watchlist** with comprehensive data (price, change, volume, 52-week highs/lows)
+- Analyze **6 key market indicators** with interactive charts:
+  - **IWM/QQQ Risk Appetite** - Small caps vs big tech sentiment
+  - **RSP/SPY Market Breadth** - Equal-weight vs cap-weighted S&P breadth
+  - **XLI/XLU Economic Confidence** - Industrials vs utilities growth sentiment
+  - **XLF/XLK Value vs Growth** - Financials vs technology rotation
+  - **HYG/IEF Credit Risk** - High-yield bonds vs treasuries risk appetite
+  - **VIX Volatility Index** - Market fear/calm levels
+- View **1-year and 3-month timeframes** for each indicator
+- **Sortable watchlist table** with 12 data columns
+- **Dynamic ticker management** (add/remove stocks)
 - Run it locally by **opening the HTML file** — no server or API keys required
 
 ---
@@ -48,10 +55,11 @@ This dashboard helps you:
 | Component | Technology | Purpose |
 |-----------|------------|----------|
 | **Frontend** | HTML5, CSS3, JavaScript (ES6+) | Pure client-side application |
-| **Charts** | Chart.js (CDN) | Interactive data visualization |
+| **Charts** | Chart.js (CDN) | Interactive data visualization for 6 market indicators |
+| **Styling** | Tailwind CSS (CDN) | Utility-first responsive design |
 | **Market Data** | Yahoo Finance API | Free real-time and historical data |
 | **CORS Proxy** | AllOrigins | Bypass CORS restrictions |
-| **Styling** | Custom CSS | Modern gradient design with responsive layout |
+| **Custom Theme** | CSS Gradients | Modern gradient design with professional styling |
 
 ---
 
@@ -144,30 +152,41 @@ EXPOSE 80
 
 | Section | Meaning |
 |---------|---------|
-| **Watchlist Table** | Price, % Change, Volume, Trend with sortable columns |
-| **IWM/QQQ Charts** | Full-width tabbed interface with 3-month, 1-month, and 1-week ratio charts |
-| **Risk Sentiment** | If the orange line rises → "risk-on" (good for small-cap tech). Falling line → "risk-off." |
+| **Watchlist Table** | Comprehensive stock data with 12 sortable columns (ticker, price, change, volume, 52W high/low, etc.) |
+| **Market Indicators** | 6 key financial ratios with 1-year and 3-month timeframes |
+| **IWM/QQQ Risk Appetite** | Rising line = risk-on (good for small caps), falling = risk-off |
+| **RSP/SPY Market Breadth** | Rising line = broad rally, falling = narrow rally |
+| **XLI/XLU Economic Confidence** | Rising line = growth sentiment, falling = defensive sentiment |
+| **XLF/XLK Value vs Growth** | Rising line = value rotation, falling = growth rotation |
+| **HYG/IEF Credit Risk** | Rising line = risk-on in bonds, falling = risk-off |
+| **VIX Volatility** | High VIX (>20) = fear, low VIX (<20) = calm |
 | **Statistics Cards** | Total tickers, up/down counts for quick overview |
-| **Refresh Button** | Updates all data on demand |
-| **Add Ticker** | Dynamically add new stocks to your watchlist |
-| **Market Context** | Explains how to interpret the IWM/QQQ ratio |
+| **Dashboard Controls** | Refresh data, add/remove tickers dynamically |
 
 ---
 
 ## 🔧 Features
 
 ### Current Features
-- ✅ **Real-time stock data** from Yahoo Finance API
-- ✅ **Interactive watchlist** with 13 pre-configured tickers
-- ✅ **Multi-timeframe IWM/QQQ ratio charts** (3-month, 1-month, 1-week)
-- ✅ **Full-width tabbed interface** for risk sentiment analysis
+- ✅ **Real-time stock data** from Yahoo Finance API with 12 data columns
+- ✅ **Interactive watchlist** with default tech stocks (AAPL, NVDA, TSLA, META, AMZN, GOOG, MSFT)
+- ✅ **6 comprehensive market indicators** with interactive charts:
+  - IWM/QQQ Risk Appetite (small caps vs big tech)
+  - RSP/SPY Market Breadth (equal-weight vs cap-weighted)
+  - XLI/XLU Economic Confidence (industrials vs utilities)
+  - XLF/XLK Value vs Growth (financials vs technology)
+  - HYG/IEF Credit Risk (high-yield vs treasuries)
+  - VIX Volatility Index (market fear gauge)
+- ✅ **Dual timeframe analysis** (1-year and 3-month) for each indicator
+- ✅ **Tabbed interface** for easy switching between timeframes
 - ✅ **Color-coded trend indicators** (green/red for up/down)
-- ✅ **Sortable table** with clickable column headers
+- ✅ **Fully sortable table** with 12 clickable column headers
 - ✅ **Summary statistics** (total tickers, up/down counts)
-- ✅ **Dynamic ticker addition** with validation
-- ✅ **Responsive design** that works on mobile and desktop
-- ✅ **Loading states** and error handling
+- ✅ **Dynamic ticker management** (add/remove stocks with validation)
+- ✅ **Responsive design** with Tailwind CSS
+- ✅ **Loading states** and comprehensive error handling
 - ✅ **Toast notifications** for user feedback
+- ✅ **Professional gradient theme** with modern UI design
 
 ### Data Sources
 - **Yahoo Finance API** (free tier) - Real-time and historical stock data
@@ -176,31 +195,34 @@ EXPOSE 80
 - **Rate limiting** - Respects Yahoo Finance's usage policies
 
 ### Technical Indicators
-- Price change percentage with color coding
-- Volume analysis with formatted numbers
-- Trend direction (up/down) with visual indicators
-- Multi-timeframe IWM/QQQ ratio with trend line and sentiment analysis
-- Dynamic statistics that update based on selected timeframe
+- **Stock Data**: Price, change %, change $, open, high, low, close, volume, 52-week high/low, trend
+- **Market Ratios**: IWM/QQQ, RSP/SPY, XLI/XLU, XLF/XLK, HYG/IEF with trend analysis
+- **Volatility**: VIX index with fear/calm sentiment interpretation
+- **Color-coded indicators**: Green/red for positive/negative changes
+- **Dynamic statistics**: Current ratios, daily changes, and sentiment analysis
+- **Multi-timeframe analysis**: 1-year and 3-month views for comprehensive market context
 
 ---
 
 ## 🎨 User Interface
 
 ### Design Features
-- **Modern gradient design** with professional styling
+- **Professional gradient theme** with modern Tailwind CSS styling
 - **Responsive grid layout** that adapts to screen size
-- **Smooth animations** and hover effects
-- **Loading spinners** during data fetch
-- **Color-coded data** for quick visual analysis
-- **Mobile-friendly** with collapsible layout
+- **Smooth animations** and hover effects throughout
+- **Loading spinners** during data fetch operations
+- **Color-coded data** for quick visual analysis (green/red trends)
+- **Mobile-friendly** responsive design with optimized layouts
+- **Custom CSS gradients** for cards, buttons, and visual hierarchy
 
 ### Interactive Elements
-- **Sortable table columns** (click headers to sort)
-- **Tabbed chart interface** for switching between timeframes
-- **Add ticker form** with Enter key support
-- **Refresh button** with visual feedback
-- **Chart interactions** (zoom, hover, etc.)
-- **Toast messages** for user notifications
+- **12 sortable table columns** (click any header to sort by that field)
+- **Tabbed chart interface** for switching between 1-year and 3-month timeframes
+- **Add/remove ticker forms** with Enter key support and validation
+- **Refresh button** with visual feedback and loading states
+- **Interactive charts** with zoom, hover, and responsive interactions
+- **Toast notification system** for user feedback and error handling
+- **Dynamic statistics** that update based on selected timeframe
 
 ---
 
@@ -217,19 +239,31 @@ EXPOSE 80
 ### Code Structure
 ```javascript
 // Core data management
-let watchlist = ["ONDS", "RGTI", "APLD", ...];
-let ratioCharts = { '3mo': null, '1mo': null, '1wk': null };
+let watchlist = ["AAPL", "NVDA", "TSLA", "META", "AMZN", "GOOG", "MSFT"];
+let ratioCharts = {
+    'iwm-qqq': { '1y': null, '3mo': null },
+    'rsp-spy': { '1y': null, '3mo': null },
+    'xli-xlu': { '1y': null, '3mo': null },
+    'xlf-xlk': { '1y': null, '3mo': null },
+    'hyg-ief': { '1y': null, '3mo': null },
+    'vix': { '1y': null, '3mo': null }
+};
 let currentStockData = [];
-let currentTab = '3mo';
+let currentSortColumn = null;
+let currentSortDirection = 'asc';
 
 // Main functions
-loadWatchlistData()     // Fetch and display stock data
-loadAllRatioCharts()    // Create multiple ratio visualizations
-getStockSummary()       // Get individual stock information
-createRatioChart()      // Generate chart for specific timeframe
-handleTabClick()        // Manage tab switching
-sortStockData()         // Handle table sorting
+loadWatchlistData()     // Fetch and display stock data with 12 columns
+loadAllRatioCharts()    // Create 6 market indicator charts
+getStockSummary()       // Get comprehensive stock information
+getHistoricalData()     // Fetch historical data for ratios
+calculateRatio()        // Calculate ratio between two assets
+createRatioChart()      // Generate chart for specific metric/timeframe
+handleTabClick()        // Manage tab switching between timeframes
+sortStockData()         // Handle table sorting by any column
 addTicker()            // Add new stocks to watchlist
+removeTicker()         // Remove stocks from watchlist
+updateRatioStats()     // Update statistics for market indicators
 ```
 
 ### API Integration
@@ -242,11 +276,29 @@ const response = await fetch(proxyUrl + encodeURIComponent(yahooUrl));
 
 ### Chart.js Implementation
 ```javascript
-// Multi-chart management
-ratioCharts[period] = new Chart(ctx, {
+// Multi-chart management for 6 metrics × 2 timeframes
+ratioCharts[metricKey][period] = new Chart(ctx, {
     type: 'line',
-    data: { /* ratio data */ },
-    options: { /* responsive config */ }
+    data: {
+        labels: labels,
+        datasets: [{
+            label: metric.name,
+            data: values,
+            borderColor: metric.colors.border,
+            backgroundColor: metric.colors.background,
+            borderWidth: 2,
+            fill: true,
+            tension: 0.1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            title: { display: true, text: `${periodLabels[period]} ${metric.name}` },
+            legend: { display: false }
+        }
+    }
 });
 ```
 
@@ -259,13 +311,18 @@ ratioCharts[period] = new Chart(ctx, {
 
 ## 💡 Usage Tips
 
-- **Run once per day** to get a feel for market sentiment
-- **Watch for green reversal days** after multiple red ones
+- **Run once per day** to get a comprehensive feel for market sentiment
+- **Watch for green reversal days** after multiple red ones in your watchlist
 - **Rising IWM/QQQ ratio** often precedes rebounds in small-cap stocks
+- **Rising RSP/SPY ratio** indicates broad market participation (not just mega-caps)
+- **XLI/XLU ratio** shows economic confidence vs defensive positioning
+- **XLF/XLK ratio** indicates value vs growth rotation trends
+- **HYG/IEF ratio** shows credit risk appetite in bond markets
+- **VIX levels** indicate market fear (>20) vs calm (<20)
 - **Switch between timeframes** to analyze short-term vs medium-term trends
-- **Use the sortable columns** to quickly identify top performers
-- **Add your own tickers** to customize the watchlist
-- **Keep it simple**: it's a **consulting dashboard**, not a trading engine
+- **Use the sortable columns** to quickly identify top performers and laggards
+- **Add your own tickers** to customize the watchlist for your strategy
+- **Keep it simple**: it's a **market analysis dashboard**, not a trading engine
 
 ---
 
@@ -282,10 +339,12 @@ stock-dashboard/
 ### Key Development Areas
 
 #### Adding New Features
-1. **New Chart Types**: Extend `createRatioChart()` function
+1. **New Market Indicators**: Add to `metrics` object and create corresponding HTML sections
 2. **Additional Timeframes**: Add to `periods` array in `loadAllRatioCharts()`
-3. **Custom Indicators**: Modify `calculateRatio()` function
-4. **UI Components**: Add to the HTML structure and corresponding JavaScript
+3. **Custom Ratios**: Modify `calculateRatio()` function for new asset pairs
+4. **New Chart Types**: Extend `createRatioChart()` function for different visualizations
+5. **UI Components**: Add to the HTML structure and corresponding JavaScript
+6. **Data Columns**: Add new fields to `getStockSummary()` and table structure
 
 #### Code Organization
 - **Global Variables**: Defined at the top for easy configuration
@@ -316,17 +375,19 @@ backgroundColor: 'rgba(r,g,b,0.1)',  // Fill color
 
 #### Adding New Timeframes
 ```javascript
-// Add to periods array
-const periods = ['3mo', '1mo', '1wk', '1d'];
+// Add to periods array in loadAllRatioCharts()
+const periods = ['1y', '3mo', '1mo', '1wk'];
 
-// Add corresponding tab button in HTML
-<button class="tab-button" data-period="1d">1-Day</button>
+// Add corresponding tab button in HTML for each metric
+<button class="tab-button" data-metric="iwm-qqq" data-period="1mo">1-Month</button>
 ```
 
 #### Styling Modifications
-- **Colors**: Modify CSS custom properties in the `<style>` section
-- **Layout**: Adjust Tailwind CSS classes
+- **Colors**: Modify CSS custom properties in the `<style>` section (theme-card, theme-surface, etc.)
+- **Layout**: Adjust Tailwind CSS classes for responsive design
 - **Typography**: Update font sizes and weights in the CSS
+- **Gradients**: Customize the gradient themes for cards and buttons
+- **Charts**: Modify Chart.js options for different visual styles
 
 ---
 
@@ -350,13 +411,14 @@ We welcome contributions! Here's how you can help:
 - **Accessibility**: Maintain keyboard navigation and screen reader support
 
 ### Areas for Contribution
-- 🐛 **Bug Fixes**: Report and fix issues
-- ✨ **New Features**: Add new chart types, timeframes, or indicators
-- 📱 **Mobile Optimization**: Improve mobile experience
-- 🎨 **UI/UX**: Enhance design and user experience
-- 📚 **Documentation**: Improve code comments and README
-- ⚡ **Performance**: Optimize data loading and rendering
-- 🔧 **API Integration**: Add support for additional data sources
+- 🐛 **Bug Fixes**: Report and fix issues with data loading or chart rendering
+- ✨ **New Features**: Add new market indicators, timeframes, or chart types
+- 📱 **Mobile Optimization**: Improve mobile experience and responsive design
+- 🎨 **UI/UX**: Enhance design, add animations, or improve user experience
+- 📚 **Documentation**: Improve code comments, README, and usage guides
+- ⚡ **Performance**: Optimize data loading, chart rendering, and memory usage
+- 🔧 **API Integration**: Add support for additional data sources or indicators
+- 📊 **Data Analysis**: Add technical indicators, moving averages, or trend analysis
 
 ### Reporting Issues
 When reporting bugs, please include:
@@ -486,18 +548,28 @@ https://query1.finance.yahoo.com/v8/finance/chart/{TICKER}?range={PERIOD}&interv
 ## 🆕 Version 1.0 Updates
 
 ### Major Improvements
-- **🎯 Full-width IWM/QQQ section** - Expanded chart area for better visibility
-- **📊 Multi-timeframe analysis** - 3-month, 1-month, and 1-week ratio charts
-- **🔄 Tabbed interface** - Easy switching between different timeframes
-- **📈 Enhanced statistics** - Dynamic updates based on selected timeframe
-- **🎨 Improved layout** - Better use of screen real estate and visual hierarchy
+- **🎯 Comprehensive market analysis** - 6 key financial indicators with dual timeframes
+- **📊 Enhanced watchlist** - 12 data columns with full sortable functionality
+- **🔄 Professional UI** - Modern gradient theme with Tailwind CSS
+- **📈 Advanced statistics** - Dynamic sentiment analysis for each indicator
+- **🎨 Responsive design** - Optimized for desktop and mobile viewing
+- **🔧 Fixed Statistics** - Current Ratio, Daily Change, and Sentiment now properly calculated and displayed
+- **🔄 Smart Retry System** - Automatic retry mechanism with exponential backoff for failed API calls
+- **📈 Improved Reliability** - Enhanced error handling and fallback strategies for chart loading
 
 ### New Features
-- Tabbed navigation for risk sentiment analysis
-- Multiple chart instances with independent data loading
-- Timeframe-specific chart titles and statistics
-- Enhanced error handling for each timeframe
-- Improved responsive design for the full-width section
+- **6 Market Indicators**: IWM/QQQ, RSP/SPY, XLI/XLU, XLF/XLK, HYG/IEF, VIX
+- **Dual Timeframes**: 1-year and 3-month analysis for each indicator
+- **Comprehensive Watchlist**: Price, change, volume, 52-week highs/lows, trend analysis
+- **Dynamic Ticker Management**: Add/remove stocks with validation
+- **Professional Styling**: Custom gradients, responsive layout, modern UI
+- **Enhanced Error Handling**: Comprehensive error management and user feedback
+- **Interactive Charts**: Zoom, hover, and responsive chart interactions
+- **Real-time Statistics**: Current ratios, daily changes, and sentiment analysis for all indicators
+- **Smart Retry System**: Automatic retry with exponential backoff (3 attempts per API call)
+- **Parallel Loading**: Charts and stock data load simultaneously for faster performance
+- **Graceful Error Handling**: Failed charts show helpful error messages instead of blank spaces
+- **Progress Feedback**: Real-time loading progress and completion status
 
 ---
 
@@ -505,6 +577,12 @@ https://query1.finance.yahoo.com/v8/finance/chart/{TICKER}?range={PERIOD}&interv
 
 1. Download `stock_dashboard.html`
 2. Open it in your browser
-3. Watch your stocks and market sentiment in real-time!
+3. Monitor your watchlist and analyze 6 key market indicators in real-time!
 
 *No installation, no dependencies, no server setup required.*
+
+### What You'll See
+- **Stock Watchlist**: Default tech stocks (AAPL, NVDA, TSLA, META, AMZN, GOOG, MSFT) with comprehensive data
+- **Market Indicators**: 6 financial ratios showing market sentiment across different sectors
+- **Interactive Charts**: Switch between 1-year and 3-month timeframes for each indicator
+- **Professional UI**: Modern gradient design with responsive layout
