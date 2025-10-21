@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IndieGoWeb Daily Stock Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Suppress Tailwind production warning
+        window.tailwind = { config: { theme: { extend: {} } } };
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* Custom styles for sort indicators */
@@ -676,11 +680,13 @@
         }
 
         // Generic retry function with exponential backoff
-        async function fetchWithRetry(url, options = {}, maxRetries = 3, baseDelay = 1000) {
+        async function fetchWithRetry(url, options = {}, maxRetries = 2, baseDelay = 2000) {
             for (let attempt = 1; attempt <= maxRetries; attempt++) {
                 try {
                     const response = await fetch(url, {
                         ...options,
+                        mode: 'cors',
+                        credentials: 'omit',
                         timeout: 10000 // 10 second timeout
                     });
                     
@@ -710,11 +716,40 @@
         // Get stock summary data with retry mechanism
         async function getStockSummary(ticker) {
             try {
-                // Using a CORS proxy to access Yahoo Finance
-                const proxyUrl = 'https://api.allorigins.win/raw?url=';
+                // Using multiple CORS proxy options for better reliability
+                const proxies = [
+                    'https://cors-anywhere.herokuapp.com/',
+                    'https://thingproxy.freeboard.io/fetch/',
+                    'https://api.allorigins.win/raw?url=',
+                    'https://corsproxy.io/?'
+                ];
+                
                 const yahooUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}`;
                 
-                const data = await fetchWithRetry(proxyUrl + encodeURIComponent(yahooUrl));
+                let data = null;
+                for (let i = 0; i < proxies.length; i++) {
+                    const proxy = proxies[i];
+                    try {
+                        const url = proxy === 'https://api.allorigins.win/raw?url=' 
+                            ? proxy + encodeURIComponent(yahooUrl)
+                            : proxy === 'https://corsproxy.io/?'
+                            ? proxy + encodeURIComponent(yahooUrl)
+                            : proxy + yahooUrl;
+                        data = await fetchWithRetry(url);
+                        if (data && data.chart) break;
+                    } catch (error) {
+                        console.warn(`Proxy ${proxy} failed, trying next...`);
+                        // Add delay between proxy attempts to avoid rate limiting
+                        if (i < proxies.length - 1) {
+                            await new Promise(resolve => setTimeout(resolve, 1000));
+                        }
+                        continue;
+                    }
+                }
+                
+                if (!data) {
+                    throw new Error('All proxies failed');
+                }
                 
                 if (!data.chart || !data.chart.result || data.chart.result.length === 0) {
                     console.warn(`No chart data available for ${ticker}`);
@@ -1098,10 +1133,40 @@
         // Get historical data with retry mechanism
         async function getHistoricalData(ticker, period) {
             try {
-                const proxyUrl = 'https://api.allorigins.win/raw?url=';
+                // Using multiple CORS proxy options for better reliability
+                const proxies = [
+                    'https://cors-anywhere.herokuapp.com/',
+                    'https://thingproxy.freeboard.io/fetch/',
+                    'https://api.allorigins.win/raw?url=',
+                    'https://corsproxy.io/?'
+                ];
+                
                 const yahooUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?range=${period}&interval=1d`;
                 
-                const data = await fetchWithRetry(proxyUrl + encodeURIComponent(yahooUrl));
+                let data = null;
+                for (let i = 0; i < proxies.length; i++) {
+                    const proxy = proxies[i];
+                    try {
+                        const url = proxy === 'https://api.allorigins.win/raw?url=' 
+                            ? proxy + encodeURIComponent(yahooUrl)
+                            : proxy === 'https://corsproxy.io/?'
+                            ? proxy + encodeURIComponent(yahooUrl)
+                            : proxy + yahooUrl;
+                        data = await fetchWithRetry(url);
+                        if (data && data.chart) break;
+                    } catch (error) {
+                        console.warn(`Proxy ${proxy} failed, trying next...`);
+                        // Add delay between proxy attempts to avoid rate limiting
+                        if (i < proxies.length - 1) {
+                            await new Promise(resolve => setTimeout(resolve, 1000));
+                        }
+                        continue;
+                    }
+                }
+                
+                if (!data) {
+                    throw new Error('All proxies failed');
+                }
                 
                 if (!data.chart || !data.chart.result || data.chart.result.length === 0) {
                     console.warn(`No historical data available for ${ticker} (${period})`);
