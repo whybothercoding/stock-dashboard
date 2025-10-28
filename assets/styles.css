@@ -1,0 +1,121 @@
+/* Custom styles for sort indicators */
+.sortable::after {
+    content: "↕";
+    position: absolute;
+    right: 10px;
+    opacity: 0.5;
+    font-size: 0.8em;
+}
+
+.sort-asc::after {
+    content: "↑";
+    opacity: 1;
+}
+
+.sort-desc::after {
+    content: "↓";
+    opacity: 1;
+}
+
+/* Tailwind UI inspired theme */
+.theme-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.theme-surface {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+}
+
+.theme-text-primary {
+    color: #1f2937;
+}
+
+.theme-text-secondary {
+    color: #6b7280;
+}
+
+.theme-border {
+    border-color: #e5e7eb;
+}
+
+.theme-shadow {
+    box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.theme-button-primary {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    transition: all 0.2s ease;
+}
+
+.theme-button-primary:hover {
+    background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
+    transform: translateY(-1px);
+}
+
+.theme-button-success {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+.theme-button-success:hover {
+    background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+}
+
+.theme-button-danger {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+
+.theme-button-danger:hover {
+    background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+}
+
+/* Table styling for expanded columns */
+#stock-table {
+    min-width: 1400px;
+}
+
+#stock-table th,
+#stock-table td {
+    white-space: nowrap;
+    min-width: 80px;
+}
+
+#stock-table th:first-child,
+#stock-table td:first-child {
+    min-width: 100px;
+}
+
+#stock-table th:nth-child(4),
+#stock-table td:nth-child(4) {
+    min-width: 90px;
+}
+
+#stock-table th:nth-child(9),
+#stock-table td:nth-child(9) {
+    min-width: 100px;
+}
+
+#stock-table th:nth-child(10),
+#stock-table td:nth-child(10) {
+    min-width: 120px;
+}
+
+/* Rendering performance helpers */
+.offscreen-section {
+    content-visibility: auto;
+    contain: content;
+}
+
+
+/* Chart sizing - keep all charts consistent height regardless of tab visibility */
+.chart-area {
+    position: relative;
+    height: 300px;
+}
+
+.chart-area > canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+

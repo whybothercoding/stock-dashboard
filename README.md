@@ -69,6 +69,10 @@ This dashboard helps you:
 stock-dashboard/
 │
 ├─ stock_dashboard.html    # Complete dashboard application
+├─ assets/
+│  ├─ styles.css          # Centralized theme/table CSS (shared by both pages)
+│  ├─ toast.js            # Centralized toast messaging helper
+│  └─ perf.js             # Optional runtime diagnostics (long task observer, utils)
 └─ README.md              # This file
 ```
 
@@ -326,13 +330,33 @@ ratioCharts[metricKey][period] = new Chart(ctx, {
 
 ---
 
+## 🧰 Shared Assets and Profiling
+
+- Include the shared assets in `stock_dashboard.html`:
+  - `<link rel="stylesheet" href="assets/styles.css">`
+  - `<script src="assets/perf.js"></script>`
+  - `<script src="assets/toast.js"></script>`
+
+- Toasts: continue using `showMessage(message, type)`; it routes to the centralized `showToast`.
+
+- Optional profiling: `assets/perf.js` logs long tasks (>50ms) and provides helpers:
+  - `scheduleFrame(fn)` to batch visual updates via `requestAnimationFrame`
+  - `throttle(fn, ms)` and `debounce(fn, ms)` for event hygiene
+
+- Chrome DevTools baseline for runtime smoothness:
+  - Performance: 10–20s recording of typical interactions
+  - Rendering: enable FPS meter & paint flashing
+  - Memory: baseline heap snapshot + 10s allocation sampling
+  - Compare before/after for FPS, long tasks, JS CPU, memory
+
+---
+
 ## 🚀 Development
 
 ### Project Structure
 ```
 stock-dashboard/
 ├── stock_dashboard.html    # Main application file
-├── local.html             # Alternative version with empty watchlist
 ├── README.md              # Documentation
 └── .gitignore            # Git ignore rules (if needed)
 ```

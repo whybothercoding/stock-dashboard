@@ -10,109 +10,9 @@
         window.tailwind = { config: { theme: { extend: {} } } };
     </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        /* Custom styles for sort indicators */
-        .sortable::after {
-            content: "↕";
-            position: absolute;
-            right: 10px;
-            opacity: 0.5;
-            font-size: 0.8em;
-        }
-
-        .sort-asc::after {
-            content: "↑";
-            opacity: 1;
-        }
-
-        .sort-desc::after {
-            content: "↓";
-            opacity: 1;
-        }
-
-        /* Tailwind UI inspired theme */
-        .theme-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        
-        .theme-surface {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-        }
-        
-        .theme-text-primary {
-            color: #1f2937;
-        }
-        
-        .theme-text-secondary {
-            color: #6b7280;
-        }
-        
-        .theme-border {
-            border-color: #e5e7eb;
-        }
-        
-        .theme-shadow {
-            box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-        
-        .theme-button-primary {
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-            transition: all 0.2s ease;
-        }
-        
-        .theme-button-primary:hover {
-            background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
-            transform: translateY(-1px);
-        }
-        
-        .theme-button-success {
-            background: linear-gradient(135deg, #059669 0%, #047857 100%);
-        }
-        
-        .theme-button-success:hover {
-            background: linear-gradient(135deg, #047857 0%, #065f46 100%);
-        }
-        
-        .theme-button-danger {
-            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-        }
-        
-        .theme-button-danger:hover {
-            background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
-        }
-        
-        /* Table styling for expanded columns */
-        #stock-table {
-            min-width: 1400px;
-        }
-        
-        #stock-table th,
-        #stock-table td {
-            white-space: nowrap;
-            min-width: 80px;
-        }
-        
-        #stock-table th:first-child,
-        #stock-table td:first-child {
-            min-width: 100px;
-        }
-        
-        #stock-table th:nth-child(4),
-        #stock-table td:nth-child(4) {
-            min-width: 90px;
-        }
-        
-        #stock-table th:nth-child(9),
-        #stock-table td:nth-child(9) {
-            min-width: 100px;
-        }
-        
-        #stock-table th:nth-child(10),
-        #stock-table td:nth-child(10) {
-            min-width: 120px;
-        }
-    </style>
+    <link rel="stylesheet" href="assets/styles.css">
+    <script src="assets/perf.js"></script>
+    <script src="assets/toast.js"></script>
 </head>
 <body class="theme-card min-h-screen p-5">
     <div class="max-w-7xl mx-auto theme-surface rounded-2xl theme-shadow overflow-hidden">
@@ -231,13 +131,13 @@
                 <!-- Tab Content -->
                 <div class="p-6">
                     <div class="tab-content" id="tab-iwm-qqq-1y">
-                        <div class="mb-6">
+                        <div class="mb-6 chart-area">
                             <canvas id="chart-iwm-qqq-1y" width="800" height="300"></canvas>
                         </div>
                     </div>
                     
                     <div class="tab-content hidden" id="tab-iwm-qqq-3mo">
-                        <div class="mb-6">
+                        <div class="mb-6 chart-area">
                             <canvas id="chart-iwm-qqq-3mo" width="800" height="300"></canvas>
                         </div>
                     </div>
@@ -282,13 +182,13 @@
                 <!-- Tab Content -->
                 <div class="p-6">
                     <div class="tab-content" id="tab-rsp-spy-1y">
-                        <div class="mb-6">
+                        <div class="mb-6 chart-area">
                             <canvas id="chart-rsp-spy-1y" width="800" height="300"></canvas>
                         </div>
                     </div>
                     
                     <div class="tab-content hidden" id="tab-rsp-spy-3mo">
-                        <div class="mb-6">
+                        <div class="mb-6 chart-area">
                             <canvas id="chart-rsp-spy-3mo" width="800" height="300"></canvas>
                         </div>
                     </div>
@@ -333,13 +233,13 @@
                 <!-- Tab Content -->
                 <div class="p-6">
                     <div class="tab-content" id="tab-xli-xlu-1y">
-                        <div class="mb-6">
+                        <div class="mb-6 chart-area">
                             <canvas id="chart-xli-xlu-1y" width="800" height="300"></canvas>
                         </div>
                     </div>
                     
                     <div class="tab-content hidden" id="tab-xli-xlu-3mo">
-                        <div class="mb-6">
+                        <div class="mb-6 chart-area">
                             <canvas id="chart-xli-xlu-3mo" width="800" height="300"></canvas>
                         </div>
                     </div>
@@ -384,13 +284,13 @@
                 <!-- Tab Content -->
                 <div class="p-6">
                     <div class="tab-content" id="tab-xlf-xlk-1y">
-                        <div class="mb-6">
+                        <div class="mb-6 chart-area">
                             <canvas id="chart-xlf-xlk-1y" width="800" height="300"></canvas>
                         </div>
                     </div>
                     
                     <div class="tab-content hidden" id="tab-xlf-xlk-3mo">
-                        <div class="mb-6">
+                        <div class="mb-6 chart-area">
                             <canvas id="chart-xlf-xlk-3mo" width="800" height="300"></canvas>
                         </div>
                     </div>
@@ -435,13 +335,13 @@
                 <!-- Tab Content -->
                 <div class="p-6">
                     <div class="tab-content" id="tab-hyg-ief-1y">
-                        <div class="mb-6">
+                        <div class="mb-6 chart-area">
                             <canvas id="chart-hyg-ief-1y" width="800" height="300"></canvas>
                         </div>
                     </div>
                     
                     <div class="tab-content hidden" id="tab-hyg-ief-3mo">
-                        <div class="mb-6">
+                        <div class="mb-6 chart-area">
                             <canvas id="chart-hyg-ief-3mo" width="800" height="300"></canvas>
                         </div>
                     </div>
@@ -486,13 +386,13 @@
                 <!-- Tab Content -->
                 <div class="p-6">
                     <div class="tab-content" id="tab-vix-1y">
-                        <div class="mb-6">
+                        <div class="mb-6 chart-area">
                             <canvas id="chart-vix-1y" width="800" height="300"></canvas>
                         </div>
                     </div>
                     
                     <div class="tab-content hidden" id="tab-vix-3mo">
-                        <div class="mb-6">
+                        <div class="mb-6 chart-area">
                             <canvas id="chart-vix-3mo" width="800" height="300"></canvas>
                         </div>
                     </div>
@@ -579,6 +479,16 @@
         let currentStockData = [];
         let currentSortColumn = null;
         let currentSortDirection = 'asc';
+
+        // Date formatter: returns e.g., 01 Jan 2000
+        function formatDateDMonYYYY(date) {
+            if (!(date instanceof Date)) return '';
+            const day = String(date.getDate()).padStart(2, '0');
+            const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            const mon = months[date.getMonth()];
+            const year = date.getFullYear();
+            return `${day} ${mon} ${year}`;
+        }
 
         // Initialize the app
         document.addEventListener('DOMContentLoaded', function() {
@@ -1120,12 +1030,13 @@
             // Update statistics if chart exists
             if (ratioCharts[metric] && ratioCharts[metric][period]) {
                 const chart = ratioCharts[metric][period];
-                if (chart && chart.data && chart.data.datasets[0].data.length > 0) {
-                    const data = chart.data.datasets[0].data.map((value, index) => ({
-                        value: value,
-                        date: new Date(chart.data.labels[index])
-                    }));
-                    updateRatioStats(data, metric);
+                // Ensure Chart.js recalculates layout when becoming visible
+                if (chart && typeof chart.resize === 'function') {
+                    chart.resize();
+                }
+                const raw = chart && chart.rawData;
+                if (raw && raw.length > 0) {
+                    updateRatioStats(raw, metric);
                 }
             }
         }
@@ -1230,7 +1141,7 @@
 
             // Determine data values and labels
             const values = data.map(d => d.value || d.ratio);
-            const labels = data.map(d => d.date.toLocaleDateString());
+            const labels = data.map(d => formatDateDMonYYYY(d.date));
 
             ratioCharts[metricKey][period] = new Chart(ctx, {
                 type: 'line',
@@ -1279,8 +1190,8 @@
                 }
             });
 
-            // Update statistics after chart creation
-            updateRatioStats(data, metricKey);
+            // Attach raw data for downstream stats without parsing labels
+            ratioCharts[metricKey][period].rawData = data;
         }
 
         // Update ratio statistics
@@ -1354,18 +1265,12 @@
                 let chartData = null;
                 let period = '1y';
                 
-                if (ratioCharts[metricKey] && ratioCharts[metricKey]['1y'] && ratioCharts[metricKey]['1y'].data) {
+                if (ratioCharts[metricKey] && ratioCharts[metricKey]['1y'] && ratioCharts[metricKey]['1y'].rawData) {
                     const chart = ratioCharts[metricKey]['1y'];
-                    chartData = chart.data.datasets[0].data.map((value, index) => ({
-                        value: value,
-                        date: new Date(chart.data.labels[index])
-                    }));
-                } else if (ratioCharts[metricKey] && ratioCharts[metricKey]['3mo'] && ratioCharts[metricKey]['3mo'].data) {
+                    chartData = chart.rawData;
+                } else if (ratioCharts[metricKey] && ratioCharts[metricKey]['3mo'] && ratioCharts[metricKey]['3mo'].rawData) {
                     const chart = ratioCharts[metricKey]['3mo'];
-                    chartData = chart.data.datasets[0].data.map((value, index) => ({
-                        value: value,
-                        date: new Date(chart.data.labels[index])
-                    }));
+                    chartData = chart.rawData;
                     period = '3mo';
                 }
                 
@@ -1478,49 +1383,13 @@
             }
         }
 
-        // Show message
+        // Centralized toast wrapper (preserve existing calls)
         function showMessage(message, type) {
-            const existingMessage = document.querySelector('.message');
-            if (existingMessage) {
-                existingMessage.remove();
+            if (window.showToast) {
+                showToast(type, message);
+                return;
             }
-
-            const messageDiv = document.createElement('div');
-            let bgColor, textColor, borderColor;
-            
-            switch(type) {
-                case 'success':
-                    bgColor = 'bg-emerald-50';
-                    textColor = 'text-emerald-700';
-                    borderColor = 'border-emerald-200';
-                    break;
-                case 'warning':
-                    bgColor = 'bg-amber-50';
-                    textColor = 'text-amber-700';
-                    borderColor = 'border-amber-200';
-                    break;
-                case 'error':
-                    bgColor = 'bg-rose-50';
-                    textColor = 'text-rose-700';
-                    borderColor = 'border-rose-200';
-                    break;
-                default:
-                    bgColor = 'bg-indigo-50';
-                    textColor = 'text-indigo-700';
-                    borderColor = 'border-indigo-200';
-            }
-            
-            messageDiv.className = `message ${bgColor} ${textColor} ${borderColor} border px-4 py-3 rounded-lg mb-4`;
-            messageDiv.textContent = message;
-            
-            const controlsSection = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2');
-            if (controlsSection) {
-                controlsSection.insertBefore(messageDiv, controlsSection.firstChild);
-            }
-            
-            setTimeout(() => {
-                messageDiv.remove();
-            }, 3000);
+            alert(message);
         }
 
         // Handle Enter key in ticker input
