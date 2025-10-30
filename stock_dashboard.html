@@ -1225,19 +1225,26 @@
                     changeElement.textContent = `${dailyChange.toFixed(2)}%`;
                 }
                 
-                // Set sentiment based on metric type
+                // Set sentiment based on metric type and chart descriptions
+                // All charts should show "Risk On" or "Risk Off"
                 let sentiment = '';
                 if (metricKey === 'vix') {
-                    sentiment = currentValue > 20 ? 'Fear' : 'Calm';
+                    // VIX: ↑ Volatility rising → Risk-Off, ↓ Volatility falling → Risk-On
+                    sentiment = dailyChange > 0 ? 'Risk-Off' : 'Risk-On';
                 } else if (metricKey === 'iwm-qqq') {
+                    // IWM/QQQ: ↑ Small-caps outperform → Risk-On, ↓ Big tech dominates → Risk-Off
                     sentiment = dailyChange > 0 ? 'Risk-On' : 'Risk-Off';
                 } else if (metricKey === 'rsp-spy') {
-                    sentiment = dailyChange > 0 ? 'Broad Rally' : 'Narrow Rally';
+                    // RSP/SPY: ↑ Broad market strength → Risk-On, ↓ Narrow leadership → Risk-Off
+                    sentiment = dailyChange > 0 ? 'Risk-On' : 'Risk-Off';
                 } else if (metricKey === 'xli-xlu') {
-                    sentiment = dailyChange > 0 ? 'Growth' : 'Defense';
+                    // XLI/XLU: ↑ Confidence in economy → Risk-On, ↓ Investors hide in utilities → Risk-Off
+                    sentiment = dailyChange > 0 ? 'Risk-On' : 'Risk-Off';
                 } else if (metricKey === 'xlf-xlk') {
-                    sentiment = dailyChange > 0 ? 'Value' : 'Growth';
+                    // XLF/XLK: ↑ Financials beat tech → Risk-Off (risk-neutral/rates rising), ↓ Tech beats financials → Risk-On
+                    sentiment = dailyChange > 0 ? 'Risk-Off' : 'Risk-On';
                 } else if (metricKey === 'hyg-ief') {
+                    // HYG/IEF: ↑ Junk bonds strong → Risk-On, ↓ Treasuries preferred → Risk-Off
                     sentiment = dailyChange > 0 ? 'Risk-On' : 'Risk-Off';
                 }
                 
